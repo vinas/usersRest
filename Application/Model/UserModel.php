@@ -10,7 +10,7 @@
 
 namespace Application\Model;
 
-class UserModel
+class UserModel implements \JsonSerializable
 {
 
 	private $id;
@@ -57,4 +57,8 @@ class UserModel
 		return array_keys(get_object_vars($this));
 	}
 
+	public function JsonSerialize()
+	{
+		return get_object_vars($this);
+	}
 }

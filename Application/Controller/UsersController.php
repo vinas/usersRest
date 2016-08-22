@@ -55,6 +55,15 @@ class UsersController
 	public function listUsers()
 	{
 		try {
+			View::renderJson($this->service->listUsers());
+		} catch (Exception $e) {
+			throw('['.$this->classPath.'::newUser] - '. $e->getMessage());
+		}
+	}
+
+	public function listUsersHtml()
+	{
+		try {
 			View::set('page', 'listUsers');
 			View::set('users', $this->service->listUsers());
 			View::render('user_list');

@@ -9,7 +9,7 @@
 * @author Leandro Menezes
 * @author Raphael Pawlik
 * @since 2012/11/14
-* @version 1.12.1114
+* @version 1.16.0822
 * @license SaSeed\license.txt
 */
 
@@ -53,8 +53,8 @@ Final class View extends FileHandler {
 	* @param string
 	* @param string
 	*/
-	public static function set($name = false, $value = false) {
-		if (($name) && ($value)) {
+	public static function set($name, $value = false) {
+		if ($name) {
 			self::$data[$name] = $value;
 		}
 	}

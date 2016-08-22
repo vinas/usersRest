@@ -13,6 +13,8 @@
 
 namespace SaSeed;
 
+header('Access-Control-Allow-Origin: *'); 
+
 use SaSeed\URLRequest;
 
 require_once('Settings.php'); // (Must be the first include)
