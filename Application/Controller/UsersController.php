@@ -23,7 +23,6 @@ class UsersController
 
 	private $params;
 	private $service;
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 
 	public function __construct()
 	{
