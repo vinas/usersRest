@@ -4,19 +4,19 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
-* @version 1.15.1026
+* @version 1.16.0901
 * @license SaSeed\license.txt
 */
 namespace Application\Repository;
 
 use SaSeed\Mapper;
+use SaSeed\ExceptionHandler;
 use Application\Model\UserModel;
 
 class UserRepository extends \SaSeed\Database\DAO {
 
 	private $db;
 	private $table = 'users';
-	private $classPath = 'Application\Repository\User';
 
 	public function __construct()
 	{
@@ -32,7 +32,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 					$this->db->getRow($this->table, '*', "id = {$userId}")
 				);
 		} catch (Exception $e) {
-			throw('['.$classPath.'::getById] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -49,7 +49,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 			}
 			return $users;
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::listAll] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -63,7 +63,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 					$this->db->getRow($this->table, '*', "email = '{$email}'")
 				);
 		} catch (Exception $e) {
-			throw('['.$classPath.'::getByEmail] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -81,7 +81,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 			$user->setId($this->db->lastId());
 			return $user;
 		} catch (Exception $e) {
-			throw('['.$classPath.'::saveNew] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -89,7 +89,12 @@ class UserRepository extends \SaSeed\Database\DAO {
 	{
 		try {
 			if (!$user->getId()) {
-				throw new Exception("No User Id");
+				ExceptionHandler::throwNew(
+					__CLASS__,
+					__FUNCTION__,
+					'No user Id informed.'
+				);
+				return false;
 			}
 			$this->db->updateRow(
 				$this->table,
@@ -107,7 +112,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 			);
 			return true;
 		} catch (Exception $e) {
-			throw('['.$classPath.'::updateUser] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 		return false;
 	}
@@ -117,7 +122,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 		try {
 			return $this->deleteUserById($user->getId());
 		} catch (Exception $e) {
-			throw('['.$classPath.'::deleteUser] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -126,16 +131,20 @@ class UserRepository extends \SaSeed\Database\DAO {
 		try {
 			return $this->db->deleteRow($this->table, " id = " . $userId);
 		} catch (Exception $e) {
-			throw('['.$classPath.'::deleteUserById] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
 	public function findUserByLogin($user, $password)
 	{
 		try {
-			return $this->db->getRow($this->table, '*', "user = '{$user}' AND password = '{$password}'");
+			return $this->db->getRow(
+				$this->table,
+				'*',
+				"user = '{$user}' AND password = '{$password}'"
+			);
 		} catch (Exception $e) {
-			throw('['.$classPath.'::findUserByLogin] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

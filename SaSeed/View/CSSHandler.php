@@ -10,12 +10,14 @@
 
 namespace SaSeed\View;
 
-Final class CSSHandler extends FileHandler {
+Final class CSSHandler extends FileHandler
+{
 
 	/**
 	* Declare CSS files contained in the general css folder
 	*/
-	public static function declareGeneralCSS() {
+	public static function declareGeneralCSS()
+	{
 		$files = scandir(MainCssPath);
 		$totFiles = count($files);
 		if ($totFiles > 2) {
@@ -30,12 +32,14 @@ Final class CSSHandler extends FileHandler {
 	*
 	* @param string - file name
 	*/
-	public static function declareSpecificCSS($file) {
+	public static function declareSpecificCSS($file)
+	{
 		echo self::setCSSTag($file).'.css';
 	}
 
 
-	private static function setCSSTag($file) {
+	private static function setCSSTag($file)
+	{
 		return '<link href="'.WebCSSViewPath.parent::setFilePath($file).'" rel="stylesheet"/>'.PHP_EOL;
 	}
 

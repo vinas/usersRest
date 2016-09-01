@@ -9,16 +9,18 @@
 * @author Leandro Menezes
 * @author Raphael Pawlik
 * @since 2012/11/14
-* @version 1.16.0822
+* @version 1.16.0901
 * @license SaSeed\license.txt
 */
 
 namespace SaSeed\View;
 
+use SaSeed\ExceptionHandler;
 use SaSeed\View\JavaScriptHandler;
 use SaSeed\View\CSSHandler;
 
-Final class View extends FileHandler {
+Final class View extends FileHandler
+{
 
 	public static $data	= Array();
 	public static $JSHandler;
@@ -29,9 +31,9 @@ Final class View extends FileHandler {
 	*
 	* @param string
 	*/
-	public static function render($name) {
+	public static function render($name)
+	{
 		if ($name) {
-
 			self::$JSHandler = new JavaScriptHandler();	
 			self::$CSSHandler = new CSSHandler();	
 			ob_start();
@@ -39,11 +41,19 @@ Final class View extends FileHandler {
 			if (self::templateFileExists($name)) {
 				require self::getTemplate($name);
 			} else {
-				throw New \Exception ("[SaSeed\View\View::render] - " . $GLOBALS['exceptions']['VIEW']['noTemplateFileInformed'] . PHP_EOL);
+				ExceptionHandler::throwNew(
+					__CLASS__,
+					__FUNCTION__,
+					'Template file not found.'
+				);
 			}
 			ob_end_flush();
 		} else {
-			throw New \Exception ("[SaSeed\View\View::render] - " . $GLOBALS['exceptions']['VIEW']['noTemplateFile'] . PHP_EOL);
+			ExceptionHandler::throwNew(
+				__CLASS__,
+				__FUNCTION__,
+				'Template file not informed.'
+			);
 		}
 	}
 
@@ -53,7 +63,8 @@ Final class View extends FileHandler {
 	* @param string
 	* @param string
 	*/
-	public static function set($name, $value = false) {
+	public static function set($name, $value = false)
+	{
 		if ($name) {
 			self::$data[$name] = $value;
 		}
@@ -62,7 +73,8 @@ Final class View extends FileHandler {
 	/**
 	* Redirects user to root
 	*/
-	public static function gotoRoot(){
+	public static function gotoRoot()
+	{
 		View::redirect('/', true);
 	}
 
@@ -72,29 +84,39 @@ Final class View extends FileHandler {
 	* @param string - template
 	* @param string
 	*/
-	public static function renderTo($name) {
+	public static function renderTo($name)
+	{
 		try {
 			ob_start();
 			extract(self::$data);
 			if (self::templateFileExists($name)) {
 				require self::getTemplate($name);
 			} else {
-				throw New \Exception ("[SaSeed\View\View::renderTo] - " . $GLOBALS['exceptions']['VIEW']['noTemplateFileInformed'] . PHP_EOL);
+				ExceptionHandler::throwNew(
+					__CLASS__,
+					__FUNCTION__,
+					'Template file not found'
+				);
 			}
 			$return	= ob_get_contents();
 			ob_end_clean();
 			return $return;
 		} catch (Exception $e) {
-			throw('[SaSeed\View\View::renderTo] - Not possible to render json object' . PHP_EOL);
+			ExceptionHandler::throwNew(
+				__CLASS__,
+				__FUNCTION__,
+				'Not possible to render: '.$e->getMessage();
+			);
 		}
 	}
 
-		/**
+	/**
 	* Append html template to a html
 	*
 	* @param string - file name
 	*/
-	public static function appendTemplate($file) {
+	public static function appendTemplate($file)
+	{
 		echo self::renderTo($file);
 	}
 
@@ -104,7 +126,8 @@ Final class View extends FileHandler {
 	* @param string - template/url
 	* @param boolean - true for external url, false for internal url
 	*/
-	public static function redirect($name = false, $full = false) {
+	public static function redirect($name = false, $full = false)
+	{
 		if ($name) {
 			if (!$full) {
 				$name = parent::setFilePath($name);
@@ -120,11 +143,20 @@ Final class View extends FileHandler {
 	*
 	* @param array
 	*/
-	public static function renderJson($array) {
-		ob_start();
-		extract(self::$data);
-		echo json_encode($array);
-		ob_end_flush();
+	public static function renderJson($array) 
+	{
+		try {
+			ob_start();
+			extract(self::$data);
+			echo json_encode($array);
+			ob_end_flush();
+		} catch (Exception $e) {
+			ExceptionHandler::throwNew(
+				__CLASS__,
+				__FUNCTION__,
+				'Not possible to render json: '.$e->getMessage();
+			);
+		}
 	}
 
 	/**
@@ -132,7 +164,8 @@ Final class View extends FileHandler {
 	*
 	* @param string - file name
 	*/
-	private static function templateFileExists($name) {
+	private static function templateFileExists($name)
+	{
 		return file_exists(self::getTemplate($name));
 	}
 
@@ -141,7 +174,8 @@ Final class View extends FileHandler {
 	*
 	* @param string - template name
 	*/
-	private static function getTemplate($name = false) {
+	private static function getTemplate($name = false)
+	{
 		if ($name) {
 			$name	= parent::setFilePath($name);
 			return TemplatesPath."{$name}.html" ;

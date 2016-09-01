@@ -15,7 +15,8 @@ namespace SaSeed\Database;
 use SaSeed\Database\Database;
 use SaSeed\Database\Pagination;
 
-class DAO {
+class DAO
+{
 
 	/**
 	* Set and connect to Database
@@ -24,7 +25,8 @@ class DAO {
 	*
 	* @param string - database name
 	*/
-	public function setDatabase($dbName) {
+	public function setDatabase($dbName)
+	{
 		$settings = parse_ini_file(ConfigPath.'database.ini', true);
 		$db	= new Database();
 		$db->DBConnection(

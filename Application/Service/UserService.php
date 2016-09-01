@@ -4,12 +4,13 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
-* @version 1.15.1026
+* @version 1.16.0901
 * @license SaSeed\license.txt
 */
 
 namespace Application\Service;
 
+use SaSeed\ExceptionHandler;
 use Application\Repository\UserRepository;
 
 class UserService {
@@ -36,7 +37,7 @@ class UserService {
 		try {
 			return $this->repository->listAll();
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::listUsers] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -45,7 +46,7 @@ class UserService {
 		try {
 			return $this->repository->getById($userId);
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::getUserById] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -54,7 +55,7 @@ class UserService {
 		try {
 			return $this->repository->deleteUserById($userId);
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::delete] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

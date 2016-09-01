@@ -10,7 +10,8 @@
 
 namespace SaSeed\View;
 
-class FileHandler {
+class FileHandler
+{
 
 	/**
 	* Render all files' contents from given folder
@@ -18,7 +19,8 @@ class FileHandler {
 	* @param string - folder name
 	* @param string - file type name
 	*/
-	public static function renderFilesFromFolder($folder, $type) {
+	public static function renderFilesFromFolder($folder, $type)
+	{
 		$files = scandir($folder);
 		$totFiles = count($files);
 		if ($totFiles > 2) {
@@ -49,7 +51,8 @@ class FileHandler {
 	*
 	* @param string - file name and path
 	*/
-	public static function setFilePath($file) {
+	public static function setFilePath($file)
+	{
 		return str_replace('_','/', $file);
 	}
 
@@ -59,7 +62,8 @@ class FileHandler {
 	* @param string - content
 	* @param string - compressed content
 	*/
-	private static function compress($buffer) {
+	private static function compress($buffer)
+	{
 		// remove comments
 		$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
 		// remove tabs, spaces, newlines, etc.

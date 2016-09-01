@@ -4,15 +4,17 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/28
-* @version 1.16.0819
+* @version 1.16.0901
 * @license SaSeed\license.txt
 */
 
 namespace SaSeed;
 
 use SaSeed\Model;
+use SaSeed\ExceptionHandler;
 
-class Mapper {
+class Mapper
+{
 
 	/**
 	* Populates given object
@@ -32,7 +34,7 @@ class Mapper {
 			}
 			return $obj;
 		} catch (Exception $e) {
-			throw('[SaSeed\Mapper::populate] - '. $e->getMessage() . PHP_EOL);
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

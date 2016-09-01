@@ -4,7 +4,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
-* @version 1.15.1026
+* @version 1.16.0901
 * @license SaSeed\license.txt
 */
 
@@ -12,8 +12,9 @@ namespace Application\Controller;
 
 use SaSeed\View\View;
 use SaSeed\URLRequest;
-
+use SaSeed\ExceptionHandler;
 use SaSeed\Mapper;
+
 use Application\Model\UserModel;
 use Application\Service\UserService;
 
@@ -22,7 +23,7 @@ class UsersController
 
 	private $params;
 	private $service;
-	private $classPath = "Application\Controller\UsersController";
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 
 	public function __construct()
 	{
@@ -37,7 +38,7 @@ class UsersController
 			View::set('page', 'newUser');
 			View::render('user_form');
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::newUser] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -48,7 +49,7 @@ class UsersController
 			View::set('page', 'newUserJson');
 			View::render('user_jsonForm');
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::newUserJson] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -57,7 +58,7 @@ class UsersController
 		try {
 			View::renderJson($this->service->listUsers());
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::newUser] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -68,7 +69,7 @@ class UsersController
 			View::set('users', $this->service->listUsers());
 			View::render('user_list');
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::newUser] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -81,7 +82,7 @@ class UsersController
 			View::set('user', $this->service->save($user));
 			View::render('user_saved');
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::save] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -93,7 +94,7 @@ class UsersController
 			$this->service->save($user);
 			$response['message'] = "User saved!";
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::saveJsonResponse] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 			$response['message'] = "User not saved!";
 		}
 		View::renderJson($response);
@@ -106,7 +107,7 @@ class UsersController
 			View::set('user', $this->service->getUserById($params[0]));
 			View::render('user_form');
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::newUser] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -117,7 +118,7 @@ class UsersController
 			$this->service->delete($params[0]);
 			View::redirect('/Users/listUsers', true);
 		} catch (Exception $e) {
-			throw('['.$this->classPath.'::delete] - '. $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 }

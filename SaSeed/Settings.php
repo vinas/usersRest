@@ -28,8 +28,5 @@ date_default_timezone_set('America/Sao_Paulo');
 setlocale(LC_MONETARY, 'pt_BR');
 setlocale(LC_ALL, 'Portuguese_Brazil.1252 ');
 
-// Exceptions Defition
-$GLOBALS['exceptions'] = parse_ini_file(ConfigPath.'exceptions.ini', true);
-
 // XSS String List
 $GLOBALS['xssStrings'] = parse_ini_file(ConfigPath.'xss.ini');

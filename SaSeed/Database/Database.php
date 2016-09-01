@@ -8,7 +8,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/04/16
-* @version 1.15.0419
+* @version 1.16.0901
 * @license SaSeed\license.txt
 *
 * @todo This needs a complete documentation and refactor.
@@ -17,6 +17,7 @@
 namespace SaSeed\Database;
 
 use \PDO;
+use SaSeed\ExceptionHandler;
 
 class Database {
 
@@ -26,8 +27,6 @@ class Database {
 	private $displayErrors	= '';		// Erro a ser exibido
 	private $errorNumber	= '';		// Retorna o valor numérico da mensagem de erro da última operação sql
 	private $isLocked		= false;	// Existe alguma tabela travada agora?
-	private $classPath		= 'Sadeed\Database';
-
 
 	// ** CONEXãO ** \\
 	// ************* \\
@@ -38,7 +37,7 @@ class Database {
 			$this->setConnectionAttributes();
 			return $this->connection;
 		} catch (PDOException $e) {
-			throw('['.$classPath.'::DBConnection] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 		return false;
 	}
@@ -198,9 +197,9 @@ class Database {
 			$query .= ')';
 			$this->runQuery($query);
 		} catch (PDOException $e) {
-			die('['.$classPath.'::DBConnection] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		} catch (Exception $e) {
-			die('['.$classPath.'::DBConnection] - '.  $e->getMessage());
+			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

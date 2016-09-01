@@ -10,19 +10,22 @@
 
 namespace SaSeed\View;
 
-Final class JavaScriptHandler extends FileHandler {
+Final class JavaScriptHandler extends FileHandler
+{
 
 	/**
 	* Declare JS files contained in the lib folder
 	*/
-	public static function declareGeneralJSLibs() {
+	public static function declareGeneralJSLibs()
+	{
 		self::declareJSFilesFromFolder('libs');
 	}
 
 	/**
 	* Declare JS files contained in the general folder
 	*/
-	public static function declareGeneralJS() {
+	public static function declareGeneralJS()
+	{
 		self::declareJSFilesFromFolder('General');
 	}
 
@@ -31,21 +34,24 @@ Final class JavaScriptHandler extends FileHandler {
 	*
 	* @param string - file name
 	*/
-	public static function declareSpecificJS($file) {
+	public static function declareSpecificJS($file)
+	{
 		echo self::setJSTag(parent::setFilePath($file).'.js');
 	}
 
 	/**
 	* Loads general JS library files' content into the template
 	*/
-	public static function loadGeneralJSLibs() {
+	public static function loadGeneralJSLibs()
+	{
 		parent::renderFilesFromFolder(MainJsPath.'Libs'.DIRECTORY_SEPARATOR, 'js');
 	}
 
 	/**
 	* Loads general JS files' content into the template
 	*/
-	public static function loadGeneralJS() {
+	public static function loadGeneralJS()
+	{
 		parent::renderFilesFromFolder(MainJsPath.'General'.DIRECTORY_SEPARATOR, 'js');
 	}
 
@@ -54,7 +60,8 @@ Final class JavaScriptHandler extends FileHandler {
 	*
 	* @param string - folder's name
 	*/
-	private static function declareJSFilesFromFolder($folder) {
+	private static function declareJSFilesFromFolder($folder)
+	{
 		$files = scandir(MainJsPath.$folder.DIRECTORY_SEPARATOR);
 		$totFiles = count($files);
 		if ($totFiles > 2) {
@@ -64,7 +71,8 @@ Final class JavaScriptHandler extends FileHandler {
 		}
 	}
 
-	private static function setJSTag($fileName) {
+	private static function setJSTag($fileName)
+	{
 		return '<script type="text/javascript" src="'.WebJSViewPath.parent::setFilePath($fileName).'"></script>'.PHP_EOL;
 	}
 

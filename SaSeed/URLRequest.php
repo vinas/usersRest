@@ -15,14 +15,16 @@
 
 namespace SaSeed;
 
-class URLRequest {
+class URLRequest
+{
 
 	/**
 	* Gets Controller's name
 	*
 	* @return string
 	*/
-	public function getController() {
+	public function getController()
+	{
 		$params = self::getAllURLParams();
 		return (empty($params[1])) ? 'IndexController' : $params[1].'Controller';
 	}
@@ -32,7 +34,8 @@ class URLRequest {
 	*
 	* @return string
 	*/
-	public function getActionFunction() {
+	public function getActionFunction()
+	{
 		$params = self::getAllURLParams();
 		return (!empty($params[2])) ? $params[2] : 'index';
 	}
@@ -46,7 +49,8 @@ class URLRequest {
 	*
 	* @return array
 	*/
-	public function getParams() {
+	public function getParams()
+	{
 		$params = self::getPostParams();
 		if ($params) {
 			return $params;
@@ -63,7 +67,8 @@ class URLRequest {
 	*
 	* @return array
 	*/
-	public static function getAllURLParams() {
+	public static function getAllURLParams()
+	{
 		return explode('/', $_SERVER['REQUEST_URI']);
 	}
 
@@ -75,7 +80,8 @@ class URLRequest {
 	*
 	* @return array
 	*/
-	public static function getURLParams() {
+	public static function getURLParams()
+	{
 		$urlParams = self::getAllURLParams();
 		for ($i = 3; $i < count($urlParams); $i++) {
 			$params[] = $urlParams[$i];
@@ -88,7 +94,8 @@ class URLRequest {
 	*
 	* @return array
 	*/
-	private function getPostParams() {
+	private function getPostParams()
+	{
 		return $_POST;
 	}
 
@@ -97,7 +104,8 @@ class URLRequest {
 	*
 	* @return array
 	*/
-	private function getGetParams() {
+	private function getGetParams()
+	{
 		return $_GET;
 	}
 

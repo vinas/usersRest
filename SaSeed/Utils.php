@@ -9,15 +9,16 @@
 * @author Leandro Menezes
 * @author Raphael Pawlik
 * @since 2011/10/13
-* @version 2.15.1021
+* @version 1.16.0901
 * @license SaSeed\license.txt
 */
 
 namespace SaSeed;
 
-class Utils {
+use SaSeed/ExceptionHandler;
 
-	private static $classPath = 'SaSeed\Utils';
+class Utils
+{
 
 	/**
 	* Converts an object to an array
@@ -25,11 +26,16 @@ class Utils {
 	* @param object
 	* @return array
 	*/
-	public static function objectToArray($obj) {
+	public static function objectToArray($obj)
+	{
 		if (is_object($obj)) {
 			return get_object_vars($obj);
 		}
-		throw new \Exception($classPath."::objectToArray - Not a valid object.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Not a valid object.'
+		);
 	}
 
 	/**
@@ -38,7 +44,8 @@ class Utils {
 	* @param array
 	* @return object
 	*/
-	public static function arrayToObject($arr) {
+	public static function arrayToObject($arr)
+	{
 		if (is_array($arr)) {
 			$obj = new stdClass();
 			foreach ($arr as $k => $v) {
@@ -46,7 +53,11 @@ class Utils {
 			}
 			return $obj;
 		}
-		throw new \Exception($classPath."::arrayToObject - Not a valid array.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Not a valid array.'
+		);
 	}
 
 	/**
@@ -55,7 +66,8 @@ class Utils {
 	* @param integer - lenght
 	* @return string
 	*/
-	public static function randomString($len = 8) {
+	public static function randomString($len = 8)
+	{
 		if (len > 0) {
 			$chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
 			$lim = strlen($chars) - 1;
@@ -64,7 +76,11 @@ class Utils {
 			}
 			return $str;
 		}
-		throw new \Exception($classPath."::randomString - Invalid lenght.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Invalid lenght.'
+		);
 	}
 
 	/**
@@ -73,7 +89,8 @@ class Utils {
 	* @param string	- accepts "yyyy/mm/dd"
 	* @return string - "yyyy-mm-dd" 
 	*/
-	public static function toMySqlDate ($date = false) {
+	public static function toMySqlDate ($date = false)
+	{
 		if ((!$date) || ($date == 'now')) {
 			return date("Y").'-'.date("m").'-'.date("d");
 		}
@@ -83,7 +100,11 @@ class Utils {
 		if (checkdate($m, $d, $y)) {
 			return $y.'-'.$m.'-'.$d;
 		}
-		throw new \Exception($classPath."::toMySqlDate - Invalid date.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Invalid date.'
+		);
 	}
 
 	/**
@@ -92,7 +113,8 @@ class Utils {
 	* @param string	- accepts "mm/dd/yyyy"
 	* @return string - "yyyy-mm-dd" 
 	*/
-	public static function usDateToMySqlDate($date = false) {
+	public static function usDateToMySqlDate($date = false)
+	{
 		// Se data não enviada
 		if ((!$date) || ($date == 'now')) {
 			return date("Y").'-'.date("m").'-'.date("d");
@@ -103,7 +125,11 @@ class Utils {
 		if (checkdate($m, $d, $y)) {
 			return $y.'-'.$m.'-'.$d;
 		}
-		throw new \Exception($classPath."::usDateToMySqlDate - Invalid date.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Invalid date.'
+		);
 	}
 
 	/**
@@ -112,7 +138,8 @@ class Utils {
 	* @param string	- accepts "yyyy-mm-dd"
 	* @return string - "dd/mm/yyyy"
 	*/
-	public static function mySqlDateToDate ($data = false) {
+	public static function mySqlDateToDate ($data = false)
+	{
 		// Se data não enviada
 		if ((!$data) || ($data == 'now')) {
 			return date("d").'/'.date("m").'/'.date("Y");
@@ -123,7 +150,11 @@ class Utils {
 		if (checkdate($m, $d, $y)) {
 			return $d.'/'.$m.'/'.$y;
 		}
-		throw new \Exception($classPath."::mySqlDatetoRegularDate - Invalid date.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Invalid date.'
+		);
 	}
 
 	/**
@@ -132,7 +163,8 @@ class Utils {
 	* @param string	- accepts "yyyy-mm-dd"
 	* @return string - "mm/dd/yyyy"
 	*/
-	public static function mySqlDateToUsDate ($data = false) {
+	public static function mySqlDateToUsDate ($data = false)
+	{
 		// Se data não enviada
 		if ((!$data) || ($data == 'now')) {
 			return date("m").'/'.date("d").'/'.date("Y");
@@ -143,7 +175,11 @@ class Utils {
 		if (checkdate($m, $d, $y)) {
 			return $m.'/'.$d.'/'.$y;
 		}
-		throw new \Exception($classPath."::mySqlDateToUsDate - Invalid date.");
+		ExceptionHandler::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Invalid date.'
+		);
 	}
 
 	/**
@@ -152,7 +188,8 @@ class Utils {
 	* @param string
 	* @return string
 	*/
-	public static function validateXss($str = false) {
+	public static function validateXss($str = false)
+	{
 		if ($str) {
 			return str_replace($GLOBALS['xssStrings'], '', $str);
 		}
@@ -165,7 +202,8 @@ class Utils {
 	* @param string
 	* @return string
 	*/
-	public static function htmlQuotes($str = false) {
+	public static function htmlQuotes($str = false)
+	{
 		if ($str) {
 			$str = str_replace('"', '&#34;', $str);
 			$str = str_replace("'", '&#39;', $str);
