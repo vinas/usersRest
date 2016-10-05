@@ -37,7 +37,7 @@ class Database {
 			$this->setConnectionAttributes();
 			return $this->connection;
 		} catch (PDOException $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 		return false;
 	}
@@ -197,9 +197,9 @@ class Database {
 			$query .= ')';
 			$this->runQuery($query);
 		} catch (PDOException $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

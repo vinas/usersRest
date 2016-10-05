@@ -64,7 +64,7 @@ Final class Session
 		if (($param) && ($val)) {
 			$_SESSION[$param] = $val;
 		} else {
-			ExceptionHandler::throwNew(
+			ExceptionHandler::throwingNew(
 				__CLASS__,
 				__FUNCTION__,
 				'Not possible to set a parameter.'
@@ -83,7 +83,7 @@ Final class Session
 		if (($param) && (array_key_exists($name, $_SESSION))) {
 			return $_SESSION[$param];
 		}
-		ExceptionHandler::throwNew(
+		ExceptionHandler::throwingNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid session parameter.'
@@ -101,7 +101,7 @@ Final class Session
 		if (($param) && (array_key_exists($param, $_SESSION))) {
 			unset($_SESSION[$param]);
 		}
-		ExceptionHandler::throwNew(
+		ExceptionHandler::throwingNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid session parameter.'

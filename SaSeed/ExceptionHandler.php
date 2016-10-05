@@ -1,10 +1,10 @@
-<?
+<?php
 /**
-* Mapper Class
+* Exception Handling Class
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2016/09/01
-* @version 1.16.0901
+* @version 1.16.1005
 * @license SaSeed\license.txt
 */
 
@@ -18,13 +18,14 @@ Final class ExceptionHandler
 	*
 	* @param string
 	*/
-	public static function throw($path, $method, $err)
+	public static function throwing($path, $method, $err)
 	{
 		throw('['.$path.'::'.$method.'] - '.$err->getMessage().PHP_EOL);
 	}
 
-	public static function throwNew($path, $method, $msg)
+	public static function throwingNew($path, $method, $msg)
 	{
+
 		throw New \Exception ("[".$path."::".$method."] - ".$msg.PHP_EOL);
 	}
 

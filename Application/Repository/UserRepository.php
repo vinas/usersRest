@@ -20,7 +20,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 
 	public function __construct()
 	{
-		$this->db = parent::setDatabase('hostinger');
+		$this->db = parent::setDatabase('localhost');
 	}
 
 	public function getById($userId = false)
@@ -32,7 +32,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 					$this->db->getRow($this->table, '*', "id = {$userId}")
 				);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -49,7 +49,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 			}
 			return $users;
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -63,7 +63,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 					$this->db->getRow($this->table, '*', "email = '{$email}'")
 				);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -81,7 +81,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 			$user->setId($this->db->lastId());
 			return $user;
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -89,7 +89,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 	{
 		try {
 			if (!$user->getId()) {
-				ExceptionHandler::throwNew(
+				ExceptionHandler::throwingNew(
 					__CLASS__,
 					__FUNCTION__,
 					'No user Id informed.'
@@ -112,7 +112,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 			);
 			return true;
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 		return false;
 	}
@@ -122,7 +122,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 		try {
 			return $this->deleteUserById($user->getId());
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -131,7 +131,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 		try {
 			return $this->db->deleteRow($this->table, " id = " . $userId);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -144,7 +144,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 				"user = '{$user}' AND password = '{$password}'"
 			);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

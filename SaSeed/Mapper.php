@@ -34,7 +34,7 @@ class Mapper
 			}
 			return $obj;
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

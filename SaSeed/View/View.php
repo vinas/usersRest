@@ -9,7 +9,7 @@
 * @author Leandro Menezes
 * @author Raphael Pawlik
 * @since 2012/11/14
-* @version 1.16.0901
+* @version 1.16.1005
 * @license SaSeed\license.txt
 */
 
@@ -35,21 +35,21 @@ Final class View extends FileHandler
 	{
 		if ($name) {
 			self::$JSHandler = new JavaScriptHandler();	
-			self::$CSSHandler = new CSSHandler();	
-			ob_start();
-			extract(self::$data);
+			self::$CSSHandler = new CSSHandler();
 			if (self::templateFileExists($name)) {
+				ob_start();
+				extract(self::$data);
 				require self::getTemplate($name);
+				ob_end_flush();
 			} else {
-				ExceptionHandler::throwNew(
+				ExceptionHandler::throwingNew(
 					__CLASS__,
 					__FUNCTION__,
 					'Template file not found.'
 				);
 			}
-			ob_end_flush();
 		} else {
-			ExceptionHandler::throwNew(
+			ExceptionHandler::throwingNew(
 				__CLASS__,
 				__FUNCTION__,
 				'Template file not informed.'
@@ -92,7 +92,7 @@ Final class View extends FileHandler
 			if (self::templateFileExists($name)) {
 				require self::getTemplate($name);
 			} else {
-				ExceptionHandler::throwNew(
+				ExceptionHandler::throwingNew(
 					__CLASS__,
 					__FUNCTION__,
 					'Template file not found'
@@ -102,10 +102,10 @@ Final class View extends FileHandler
 			ob_end_clean();
 			return $return;
 		} catch (Exception $e) {
-			ExceptionHandler::throwNew(
+			ExceptionHandler::throwingNew(
 				__CLASS__,
 				__FUNCTION__,
-				'Not possible to render: '.$e->getMessage();
+				'Not possible to render: '.$e->getMessage()
 			);
 		}
 	}
@@ -151,10 +151,10 @@ Final class View extends FileHandler
 			echo json_encode($array);
 			ob_end_flush();
 		} catch (Exception $e) {
-			ExceptionHandler::throwNew(
+			ExceptionHandler::throwingNew(
 				__CLASS__,
 				__FUNCTION__,
-				'Not possible to render json: '.$e->getMessage();
+				'Not possible to render json: '.$e->getMessage()
 			);
 		}
 	}
@@ -166,7 +166,10 @@ Final class View extends FileHandler
 	*/
 	private static function templateFileExists($name)
 	{
-		return file_exists(self::getTemplate($name));
+		if (file_exists(self::getTemplate($name))) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

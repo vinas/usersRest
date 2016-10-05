@@ -37,7 +37,7 @@ class UserService {
 		try {
 			return $this->repository->listAll();
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -46,7 +46,7 @@ class UserService {
 		try {
 			return $this->repository->getById($userId);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -55,7 +55,7 @@ class UserService {
 		try {
 			return $this->repository->deleteUserById($userId);
 		} catch (Exception $e) {
-			ExceptionHandler::throw(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
