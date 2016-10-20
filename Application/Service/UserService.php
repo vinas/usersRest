@@ -12,6 +12,7 @@ namespace Application\Service;
 
 use SaSeed\ExceptionHandler;
 use Application\Repository\UserRepository;
+use Application\Service\ErrorHandlerService;
 
 class UserService {
 
@@ -44,7 +45,11 @@ class UserService {
 	public function getUserById($userId)
 	{
 		try {
-			return $this->repository->getById($userId);
+			if ($userId > 0 && is_numeric($userId)) {
+				return $this->repository->getById($userId);
+			}
+			$error = new ErrorHandlerService();
+			return $error->handleError(660);
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}

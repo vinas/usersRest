@@ -30,6 +30,25 @@ class UsersController
 		$this->service = new UserService();
 	}
 
+	public function listUsers()
+	{
+		try {
+			View::renderJson($this->service->listUsers());
+		} catch (Exception $e) {
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+		}
+	}
+
+	public function getUser()
+	{
+		try {
+			$params = $this->params->getParams();
+			View::renderJson($this->service->getUserById($params[0]));
+		} catch (Exception $e) {
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+		}
+	}
+
 	public function newUser()
 	{
 		try {
@@ -47,15 +66,6 @@ class UsersController
 			View::set('user', new UserModel());
 			View::set('page', 'newUserJson');
 			View::render('user_jsonForm');
-		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
-		}
-	}
-
-	public function listUsers()
-	{
-		try {
-			View::renderJson($this->service->listUsers());
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
