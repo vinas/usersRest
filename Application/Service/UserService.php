@@ -30,13 +30,12 @@ class UserService {
 		$res = new ResponseModel();
 		try {
 			if ($this->isUserValid($user)) {
-				echo 'aqui<br/>';
 				if ($user->getId() > 0) {
 					$this->repository->update($user);
 				} else {
 					$user = $this->repository->saveNew($user);
 				}
-				$res->handleResponse(200);
+				$res = $responseHandler->handleResponse(200);
 			} else {
 				$res = $responseHandler->handleResponse(100);
 			}
