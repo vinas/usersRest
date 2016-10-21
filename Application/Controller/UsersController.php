@@ -66,7 +66,8 @@ class UsersController
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
-		View::renderJson($res);
+		//View::renderJson($res);
+		View::renderJson($user);
 	}
 
 	public function saveJsonResponse()

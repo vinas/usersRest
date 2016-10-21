@@ -7,13 +7,15 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2012/11/15
-* @version 1.15.1021
+* @version 1.16.1021
 * @license SaSeed\license.txt
 */
 
 namespace SaSeed;
 
-header('Access-Control-Allow-Origin: *'); 
+//header('Access-Control-Allow-Origin: *'); 
+header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+header('Access-Control-Allow-Credentials: true');
 
 use SaSeed\URLRequest;
 
