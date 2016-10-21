@@ -9,7 +9,7 @@
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @author Leandro Menezes
 * @since 2012/11/14
-* @version 1.15.1026
+* @version 1.16.1021
 * @license SaSeed\license.txt
 */
 
@@ -82,6 +82,7 @@ class URLRequest
 	*/
 	public static function getURLParams()
 	{
+		$params = [];
 		$urlParams = self::getAllURLParams();
 		for ($i = 3; $i < count($urlParams); $i++) {
 			$params[] = $urlParams[$i];

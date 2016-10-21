@@ -12,7 +12,8 @@ namespace Application\Service;
 
 use SaSeed\ExceptionHandler;
 use Application\Repository\UserRepository;
-use Application\Service\ErrorHandlerService;
+use Application\Service\ResponseHandlerService;
+use Application\Model\ResponseModel;
 
 class UserService {
 
@@ -25,12 +26,25 @@ class UserService {
 
 	public function save($user)
 	{
-		if ($user->getId() > 0) {
-			$this->repository->update($user);
-		} else {
-			$user = $this->repository->saveNew($user);
+		$responseHandler = new ResponseHandlerService();
+		$res = new ResponseModel();
+		try {
+			if ($this->isUserValid($user)) {
+				echo 'aqui<br/>';
+				if ($user->getId() > 0) {
+					$this->repository->update($user);
+				} else {
+					$user = $this->repository->saveNew($user);
+				}
+				$res->handleResponse(200);
+			} else {
+				$res = $responseHandler->handleResponse(100);
+			}
+		} catch (Exception $e) {
+			$res->handleResponse(101);
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
-		return $user;
+		return $res;
 	}
 
 	public function listUsers()
@@ -42,14 +56,17 @@ class UserService {
 		}
 	}
 
-	public function getUserById($userId)
+	public function getUserById($userId = false)
 	{
 		try {
-			if ($userId > 0 && is_numeric($userId)) {
-				return $this->repository->getById($userId);
+			if ($userId) {
+				$user = $this->repository->getById($userId);
+				if ($user->getId() > 0 && is_numeric($user->getId())) {
+					return $user;
+				}
 			}
-			$error = new ErrorHandlerService();
-			return $error->handleError(660);
+			$error = new ResponseHandlerService();
+			return $error->handleResponse(660);
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
@@ -62,6 +79,18 @@ class UserService {
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
+	}
+
+	private function isUserValid($user)
+	{
+		if (strlen($user->getUser()) < 1) {
+			return false;
+		} else if (strlen($user->getEmail()) < 1) {
+			return false;
+		} else if (strlen($user->getPassword()) < 1) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -16,7 +16,6 @@ use SaSeed\ExceptionHandler;
 use SaSeed\Mapper;
 
 use Application\Model\UserModel;
-use Application\Service\ResponseHandlerService;
 use Application\Service\UserService;
 
 class UsersController
@@ -31,56 +30,50 @@ class UsersController
 		$this->service = new UserService();
 	}
 
-	public function listUsers()
+	public function newUser()
 	{
-		$users = false;
 		try {
-			$users = $this->service->listUsers();
+			View::set('user', new UserModel());
+			View::set('page', 'newUser');
+			View::render('user_form');
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
-		View::renderJson($users);
 	}
 
-	public function getUser()
+	public function listUsers()
 	{
-		$user = false;
 		try {
-			$params = $this->params->getParams();
-			$user = $this->service->getUserById($params[0]);
+			View::set('page', 'listUsers');
+			View::set('users', $this->service->listUsers());
+			View::render('user_list');
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
-		View::renderJson($user);
 	}
 
 	public function save()
 	{
-		$res = new ResponseHandlerService();
-		$res = $res->handleResponse();
 		try {
 			$mapper = new Mapper();
 			$user = $mapper->populate(new UserModel(), $this->params->getParams());
 			$user->setPassword(md5($user->getPassword()));
-			$res = $this->service->save($user);
+			View::set('user', $this->service->save($user));
+			View::render('user_saved');
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
-		View::renderJson($res);
 	}
 
-	public function saveJsonResponse()
+	public function edit()
 	{
 		try {
-			$mapper = new Mapper();
-			$user = $mapper->populate(new UserModel(), $this->params->getParams());
-			$this->service->save($user);
-			$response['message'] = "User saved!";
+			$params = $this->params->getParams();
+			View::set('user', $this->service->getUserById($params[0]));
+			View::render('user_form');
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
-			$response['message'] = "User not saved!";
 		}
-		View::renderJson($response);
 	}
 
 	public function delete()

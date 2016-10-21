@@ -10,7 +10,7 @@
 
 namespace Application\Model;
 
-class RequestDataErrorModel implements \JsonSerializable
+class ResponseModel implements \JsonSerializable
 {
 
 	private $code;
