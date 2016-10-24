@@ -11,6 +11,7 @@
 namespace Application\Service;
 
 use SaSeed\ExceptionHandler;
+use SaSeed\Mapper;
 use Application\Repository\UserRepository;
 use Application\Service\ResponseHandlerService;
 use Application\Model\ResponseModel;
@@ -27,23 +28,25 @@ class UserService {
 	public function save($user)
 	{
 		$responseHandler = new ResponseHandlerService();
-		$res = new ResponseModel();
+		$mapper = new Mapper();
 		try {
 			if ($this->isUserValid($user)) {
+				$user->setPassword(md5($user->getPassword()));
 				if ($user->getId() > 0) {
 					$this->repository->update($user);
 				} else {
 					$user = $this->repository->saveNew($user);
 				}
-				$res = $responseHandler->handleResponse(200);
-			} else {
-				$res = $responseHandler->handleResponse(100);
+				return $mapper->populate(
+						$responseHandler->handleResponse(200),
+						$user
+					);
 			}
+			return $responseHandler->handleResponse(100);
 		} catch (Exception $e) {
-			$res->handleResponse(101);
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			return $responseHandler->handleResponse(101);
 		}
-		return $res;
 	}
 
 	public function listUsers()

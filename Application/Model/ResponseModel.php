@@ -75,6 +75,10 @@ class ResponseModel implements \JsonSerializable
 		$this->message = $message;
 	}
 
+	public function listProperties() {
+		return array_keys(get_object_vars($this));
+	}
+
 	public function JsonSerialize()
 	{
 		return get_object_vars($this);

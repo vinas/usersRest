@@ -56,32 +56,16 @@ class UsersController
 
 	public function save()
 	{
-		$res = new ResponseHandlerService();
-		$res = $res->handleResponse();
+		$responseHandler = new ResponseHandlerService();
+		$res = $responseHandler->handleResponse();
 		try {
 			$mapper = new Mapper();
 			$user = $mapper->populate(new UserModel(), $this->params->getParams());
-			$user->setPassword(md5($user->getPassword()));
 			$res = $this->service->save($user);
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
 		}
-		//View::renderJson($res);
-		View::renderJson($user);
-	}
-
-	public function saveJsonResponse()
-	{
-		try {
-			$mapper = new Mapper();
-			$user = $mapper->populate(new UserModel(), $this->params->getParams());
-			$this->service->save($user);
-			$response['message'] = "User saved!";
-		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
-			$response['message'] = "User not saved!";
-		}
-		View::renderJson($response);
+		View::renderJson($res);
 	}
 
 	public function delete()
@@ -89,9 +73,11 @@ class UsersController
 		try {
 			$params = $this->params->getParams();
 			$this->service->delete($params[0]);
-			View::redirect('/Users/listUsers', true);
+			$res = (object) ['code'=>200, 'message'=>'User deleted.'];
 		} catch (Exception $e) {
 			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			$res = (object) ['code'=>102, 'message'=>'User could not be deleted'];
 		}
+		View::renderJson($res);
 	}
 }
