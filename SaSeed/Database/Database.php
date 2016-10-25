@@ -18,13 +18,19 @@ namespace SaSeed\Database;
 
 use \PDO;
 use SaSeed\ExceptionHandler;
+use SaSeed\Database\QueryBuilder;
 
 class Database
 {
 
 	private $connection;
 	private $isLocked = false;
-	private $query = false;
+	private $queryBuilder = false;
+
+	public function __construct()
+	{
+		$this->queryBuilder = new QueryBuilder();
+	}
 
 	/**
 	* Connects to the Database
@@ -54,88 +60,6 @@ class Database
 	public function close()
 	{
 		$this->connection = null;
-	}
-
-	// ** CRUD ** \\
-	// ********** \\
-
-	/**
-	* Runs a Query
-	*
-	* @param string
-	*/
-	private function runQuery($query)
-	{
-		try{
-			return $this->connection->query($query);
-		} catch (PDOException $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-		}
-		
-	}
-
-	/**
-	* Fetches data in a result set and returns it in asked format
-	*
-	* @param result set
-	* @param string
-	* @return array
-	*/
-	private function fetch($stmt, $mode)
-	{
-		try {
-			return $stmt->fetchAll($mode);
-		} catch (PDOException $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-		}
-		
-	}
-
-	/**
-	* Returns a result set as an associative array
-	*
-	* @param result set
-	* @return array
-	*/
-	private function fetchAssoc($stmt)
-	{
-		return $this->fetch($stmt, PDO::FETCH_ASSOC);
-	}
-
-	/**
-	* Returns a result set as an numeric array
-	*
-	* @param result set
-	* @return array
-	*/
-	private function fetchNumeric($stmt)
-	{
-		return $this->fetch($stmt, PDO::FETCH_NUM);
-	}
-
-	/**
-	* Returns a result set as an object
-	*
-	* @param result set
-	* @return object
-	*/
-	private function fetchObject($stmt)
-	{
-		return $this->fetch($stmt, PDO::FETCH_OBJ);
-	}
-
-	/**
-	* Returns a result set as an array indexed by both
-	* column name and 0-indexed column number
-	*
-	* @param result set
-	* @return object
-	*/
-	private function fetchBoth($stmt)
-	{
-		return $stmt->fetch($stmt, PDO::FETCH_BOTH);
 	}
 
 	/**
@@ -350,6 +274,86 @@ class Database
 			return true;
 		}
 		return false;
+	}
+
+
+	/**
+	* Runs a Query
+	*
+	* @param string
+	*/
+	private function runQuery($query)
+	{
+		try{
+			return $this->connection->query($query);
+		} catch (PDOException $e) {
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} catch (Exception $e) {
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		}
+		
+	}
+
+	/**
+	* Fetches data in a result set and returns it in asked format
+	*
+	* @param result set
+	* @param string
+	* @return array
+	*/
+	private function fetch($stmt, $mode)
+	{
+		try {
+			return $stmt->fetchAll($mode);
+		} catch (PDOException $e) {
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		}
+		
+	}
+
+	/**
+	* Returns a result set as an associative array
+	*
+	* @param result set
+	* @return array
+	*/
+	private function fetchAssoc($stmt)
+	{
+		return $this->fetch($stmt, PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Returns a result set as an numeric array
+	*
+	* @param result set
+	* @return array
+	*/
+	private function fetchNumeric($stmt)
+	{
+		return $this->fetch($stmt, PDO::FETCH_NUM);
+	}
+
+	/**
+	* Returns a result set as an object
+	*
+	* @param result set
+	* @return object
+	*/
+	private function fetchObject($stmt)
+	{
+		return $this->fetch($stmt, PDO::FETCH_OBJ);
+	}
+
+	/**
+	* Returns a result set as an array indexed by both
+	* column name and 0-indexed column number
+	*
+	* @param result set
+	* @return object
+	*/
+	private function fetchBoth($stmt)
+	{
+		return $stmt->fetch($stmt, PDO::FETCH_BOTH);
 	}
 
 	/**
