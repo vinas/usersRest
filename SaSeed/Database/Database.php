@@ -8,7 +8,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/04/16
-* @version 1.16.0901
+* @version 1.16.1025
 * @license SaSeed\license.txt
 *
 * @todo This needs a complete documentation and refactor.
@@ -19,19 +19,25 @@ namespace SaSeed\Database;
 use \PDO;
 use SaSeed\ExceptionHandler;
 
-class Database {
+class Database
+{
 
-	private $connection;				// Link de conexão
-	private $lastConnection = null;		// Contém as informações da última conexão usada
-	private $error			= '';		// Retorna o texto da mensagem de erro da última operação sql
-	private $displayErrors	= '';		// Erro a ser exibido
-	private $errorNumber	= '';		// Retorna o valor numérico da mensagem de erro da última operação sql
-	private $isLocked		= false;	// Existe alguma tabela travada agora?
+	private $connection;
+	private $lastConnection = null;
+	private $isLocked = false;
 
-	// ** CONEXãO ** \\
-	// ************* \\
-
-	public function DBConnection($driver, $host, $dbName, $user, $pass, $charset = 'utf8') {
+	/**
+	* Connects to the Database
+	*
+	* @param string
+	* @param string
+	* @param string
+	* @param string
+	* @param string
+	* @param string
+	*/
+	public function connect($driver, $host, $dbName, $user, $pass, $charset = 'utf8')
+	{
 		try {
 			$this->connection = new PDO($driver.':host='.$host.';dbname='.$dbName.';charset='.$charset, $user, $pass);
 			$this->setConnectionAttributes();
@@ -42,59 +48,117 @@ class Database {
 		return false;
 	}
 
-	public function close() {
+	/**
+	* Closes a Database connection
+	*/
+	public function close()
+	{
+		$this->connection = null;
 	}
 
 	// ** CRUD ** \\
 	// ********** \\
 
-	private function runQuery($query) {
-		return $this->connection->query($query);
+	/**
+	* Runs a Query
+	*
+	* @param string
+	*/
+	private function runQuery($query)
+	{
+		try{
+			return $this->connection->query($query);
+		} catch (PDOException $e) {
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+		} catch (Exception $e) {
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+		}
+		
 	}
 
-	/* Pega linha de resultado como um array associativo
-	 * @param  string  - A query
-	 * @return array */
-	private function fetch($stmt) {
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	/**
+	* Fetches data in a result set and returns it in asked format
+	*
+	* @param result set
+	* @param string
+	* @return array
+	*/
+	private function fetch($stmt, $mode)
+	{
+		try {
+			return $stmt->fetchAll($mode);
+		} catch (PDOException $e) {
+			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+		}
+		
 	}
 
-	/* Pega linha de resultado como array numérico
-	 * @param  string - A query
-	 * @return array */
-	private function numericFetch($query) {
-		return $stmt->fetchAll(PDO::FETCH_NUM);
+	/**
+	* Returns a result set as an associative array
+	*
+	* @param result set
+	* @return array
+	*/
+	private function fetchAssoc($stmt)
+	{
+		return $this->fetch($stmt, PDO::FETCH_ASSOC);
 	}
 
-	/* Pega linha de resultado como um objeto
-	 * @param  string - A query
-	 * @return array */
-	private function objfetch($query) {
-		return $stmt->fetchAll(PDO::FETCH_OBJ);
+	/**
+	* Returns a result set as an numeric array
+	*
+	* @param result set
+	* @return array
+	*/
+	private function fetchNumeric($stmt)
+	{
+		return $this->fetch($stmt, PDO::FETCH_NUM);
 	}
 
-	private function bothfetch($query) {
-		return $stmt->fetchAll(PDO::FETCH_BOTH);
+	/**
+	* Returns a result set as an object
+	*
+	* @param result set
+	* @return object
+	*/
+	private function fetchObject($stmt)
+	{
+		return $this->fetch($stmt, PDO::FETCH_OBJ);
 	}
 
+	/**
+	* Returns a result set as an array indexed by both
+	* column name and 0-indexed column number
+	*
+	* @param result set
+	* @return object
+	*/
+	private function fetchBoth($stmt)
+	{
+		return $stmt->fetch($stmt, PDO::FETCH_BOTH);
+	}
+
+	/**
+	* Returns last inserted id
+	*
+	* @return string
+	*/
 	public function lastId() {
 		return $this->connection->lastInsertId();
 	}
 
-
-	// *** Funções CRUD pré-preparadas ***
-
-	/* Pega vários registros de uma tabela podendo-se usar condições, selecionar campos,
-	   e definir a paginação
-	 *
-	 * @param string	- Tabela alvo
-	 * @param string	- Condições
-	 * @param string	- Que campos pegar (mto útil ao se usar JOINs)
-	 * @param integer	- Regsitro de início (paginação)
-	 * @param integer	- Máximo de registros (paginação)
-	 *
-	 * @return mixed */
-	public function getAllRows($table, $selectWhat = '*', $conditions = '1', $limit = false, $max = false) {
+	/**
+	* Get rows and return them as an associative array
+	*
+	* @param string
+	* @param string
+	* @param string
+	* @param integer
+	* @param integer
+	* @return array
+	*/
+	public function getRows($table, $selectWhat = '*', $conditions = '1', $limit = false, $max = false)
+	{
 		$query = 'SELECT '.$selectWhat.' FROM '.$table.' WHERE '.$conditions;
 		if ($limit) {
 			$query .= ' LIMIT '.$limit;
@@ -102,172 +166,164 @@ class Database {
 				$query .= ', '.$max;
 			}
 		}
-		return $this->fetch($this->runQuery($query));
+		return $this->fetchAssoc($this->runQuery($query));
 	}
 
-	/* Pega um único registro podendo-se utilizar condições e selecionar os campos
-	 *
-	 * @param string	- Tabela alvo
-	 * @param string	- quais as condições
-	 * @param string	- Que campos pegar. (mto útil ao se usar JOINs)
-	 *
-	 * @return mixed */
-	public function getRow($table, $selectWhat = '*', $conditions = '1') {
+	/**
+	* Gets a single row and returns it as an associative array.
+	*
+	* If more than one row is returned, this method will return
+	* the first row on the result set.
+	*
+	* @param string
+	* @param string
+	* @param string
+	* @return array
+	*/
+	public function getRow($table, $selectWhat = '*', $conditions = '1')
+	{
 		$query = 'SELECT '.$selectWhat.' FROM '.$table.' WHERE '.$conditions;
-		$result = $this->fetch($this->runQuery($query));
+		$result = $this->fetchAssoc($this->runQuery($query));
 		return (count($result) > 0) ? $result[0] :  false;
 	}
 
-	/* Atualiza ou mais registros (apenas uma condição)
-	 *
-	 * @param string	- Tabela alvo
-	 * @param string	- Condições
-	 * @param string	- Que campos pegar. (mto útil ao se usar JOINs)
-	 *
-	 * @return boolean */
-	public function updateRow($table, $fields, $values, $condition) {
-		$i = 0;
-		$query = '';
+	/**
+	* Updates one or more rows
+	*
+	* @param string
+	* @param array
+	* @param array
+	* @param string
+	* @return void
+	*/
+	public function update($table, $values, $fields, $condition)
+	{
 		if (count($fields) == count($values)) {
 			$query = 'UPDATE '.$table.' SET ';
-			foreach ($fields as $campo) {
+			for ($i = 0; $i < count($fields); $i++) {
 				if ($i != 0) {
 					$query .= ', ';
 				}
-				$query .= $campo.' = ';
-				if (is_int($values[$i])) { // numérico
+				$query .= $fields[$i].' = ';
+				if (is_numeric($values[$i])) {
 					$query .= $values[$i];
-				} else if (gettype($values[$i]) == 'object') { // data/objeto
-					foreach ($values[$i] as $variavel) {
-							$valor = $variavel;
-							break;
-					}
-					$query .= "'".$valor."'";
-				} else { // string
-					$query .= "'".$values[$i]."'";
-				}
-				$i++;
-			}
-			$query .= ' WHERE '.$condition;
-		}
-		return $this->runQuery($query);
-	}
-
-	public function deleteRow($table = '', $condition = '') {
-		return $this->runQuery('DELETE FROM '.$table.' WHERE '.$condition);
-	}
-
-	public function insertRow($table, $values, $fields = '') {
-		try {
-			$query = 'INSERT INTO '.$table.' (';
-			if ($fields == '') {
-				$fields = $this->listFields_noid($table);
-				for ($i = 0; $i < count($fields); $i++) {
-					if ($i > 0) {
-						$query .= ', ';
-					}
-					$query .= $fields[$i];
-				}
-			} else {
-				for ($i = 0; $i < count($fields); $i++) {
-					if ($i > 0) {
-						$query .= ', ';
-					}
-					$query .= $fields[$i];
-				}
-			}
-			$query .= ') VALUES (';
-			for ($i = 0; $i < count($values); $i++) {
-				if ($i != 0) {
-					$query .= ', ';
-				}
-
-				if (is_int($values[$i])) {
-					$query .= $values[$i];
-				} else if (gettype($values[$i]) == 'object') {
-					foreach ($values[$i] as $variavel) {
-							$valor = $variavel;
-							break;
-					}
-					$query .= "'".$valor."'";
 				} else {
 					$query .= "'".$values[$i]."'";
 				}
 			}
-			$query .= ')';
+			$query .= ' WHERE '.$condition;
 			$this->runQuery($query);
-		} catch (PDOException $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
-		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+		} else {
+			ExceptionHandler::throwingNew(__CLASS__, __FUNCTION__, 'Error: amount of fields and values informed do not match.');
 		}
 	}
 
-	// ** FUNÇÕES AUXILIARES ** \\
-	// ************************ \\
+	/**
+	* Deletes one or more rows
+	*
+	* @param string
+	* @param string
+	*/
+	public function deleteRow($table, $condition)
+	{
+		return $this->runQuery('DELETE FROM '.$table.' WHERE '.$condition);
+	}
 
-	/* Retorna os nomes dos campos de uma tabela
-	 * @param  string  - A tabela
-	 * @return array */
-	public function listFields($table) {
+	/**
+	* Inserts one row
+	*
+	* @param string
+	* @param string
+	* @param array
+	* @return void
+	*/
+	public function insertRow($table, $values, $fields = false)
+	{
+		$query = 'INSERT INTO '.$table.' (';
+		if ($fields == false) {
+			$fields = $this->listFieldsNoId($table);
+		}
+		for ($i = 0; $i < count($fields); $i++) {
+			if ($i != 0) {
+				$query .= ', ';
+			}
+			$query .= $fields[$i];
+		}
+		$query .= ') VALUES (';
+		for ($i = 0; $i < count($values); $i++) {
+			if ($i != 0) {
+				$query .= ', ';
+			}
+			if (is_numeric($values[$i])) {
+				$query .= $values[$i];
+			} else {
+				$query .= "'".$values[$i]."'";
+			}
+		}
+		$query .= ')';
+		$this->runQuery($query);
+	}
+
+	/**
+	* Returns names of the fields in a table
+	*
+	* @param string
+	* @return array
+	*/
+	public function listFields($table, $id = true)
+	{
+		$fields = [];
 		$query = 'SHOW COLUMNS FROM '.$table;
-		$rows = $this->fetch($this->runQuery($query));
+		$rows = $this->fetchAssoc($this->runQuery($query));
 		foreach ($rows as $row) {
+			if ($row['Field'] == 'id' && !$id) {
+				continue;
+			}
 			$fields[] = $row['Field'];
 		}
 		return $fields;
-
 	}
 
-	/* Retorna os nomes dos campos de uma tabela (menos campo ID)
-	 * @param  string  - A tabela
-	 * @return array */
-	public function listFields_noid($table) {
-		$contador = 0;
-		$query = 'SHOW COLUMNS FROM '.$table;
-		$rows = $this->fetch($this->runQuery($query));
-		foreach ($rows as $row) {
-			if ($row['Field'] != 'id') {
-				$fields[] = $row['Field'];
-			}
-		}
-		return $fields;
+	/**
+	* Returns names of the fields in a table, without the ID field
+	*
+	* @param string
+	* @return array
+	*/
+	public function listFieldsNoId($table)
+	{
+		return $this->listFields($table, false);
 	}
 
-	/* Retorna número de campos de uma tabela
-	 * @param  string  - A tabela
-	 * @return integer */
-	public function numFields($table) {
-		$query = 'DESCRIBE '.$table;
-		$res = $this->fetch($this->runQuery($query));
-		return count($res);
+	/**
+	* Counts the columns in a table and returns it.
+	*
+	* @param string
+	* @return integer
+	*/
+	public function countFields($table)
+	{
+		return count($this->fetchAssoc($this->runQuery('DESCRIBE '.$table)));
 	}
 
-	/* DEPRECATED AFTER VERSION 1.15.0417
-	 *
-	 * Retorna o número de linhas de uma query já executada
-	 * @param  string - O resultado da query.
-	 * @return integer */
-	public function numRows($result) {
-		return mysql_num_rows($result);
-	}
-
-	/* Retorna o número de linhas afetadas pela última query
-	 * @return integer */
-	public function affectedRows() {
+	/**
+	* Returns the total of rows affected by the last query
+	*
+	* @return integer
+	*/
+	public function affectedRows()
+	{
 		return $this->connection->rowCount();
 	}
 
-	/* Retorna o número total de queries executadas. (Vai geralmente no fim do script)
-	 * @return integer */
-	public function numQueries() {
-		return $this->queries_count;
-	}
-
-	/* Trava uma(s) tabela(s)
-	 * @param   array  - Array das tabelas => Tipo de trava
-	 * @return  void */
-	public function lockTables($tables) {	
+	/**
+	* Locks tables
+	*
+	* @param array
+	* @return boolean
+	*/
+	public function lockTables($tables)
+	{
 		if ((is_array($tables)) && (count($tables) > 0)) {
 			$msql = '';
 			foreach ($tables as $name=>$type){
@@ -275,46 +331,35 @@ class Database {
 			}
 			$this->runQuery('LOCK TABLES '.$msql.'');
 			$this->isLocked = true;
+			return true;
 		}
+		return false;
 	}
 
-	/* Destrava tabela(s) do banco */ 
-	public function unlockTables() {
+	/**
+	* Unlocks tables
+	*
+	* @param array
+	* @return boolean
+	*/
+	public function unlockTables()
+	{
 		if ($this->isLocked){
 			$this->runQuery('UNLOCK TABLES');
 			$this->isLocked = false;
+			return true;
 		}
+		return false;
 	}
 
-	/* DEPRECATED ON FROM VERSION 1.15.0417
-	 *
-	 * Trata um valor para ser usado com segurança em queries
-	 * @param  string  - String a ser tratada
-	 * @param  bool    - Caso tratar '%' e '_' seja preciso
-	 * @return string */
-	public function stringEscape($string, $fullEscape = false) {
-		if ($fullEscape) $string = str_replace(array('%', '_'), array('\%', '\_'), $string);
-		$string = stripslashes($string);
-		if (function_exists('mysql_real_escape_string')) {
-			return mysql_real_escape_string($string, $this->connection);
-		} else{
-			return mysql_escape_string($string);
-		}
-	}
-
-	/* DEPRECATED ON FROM VERSION 1.15.0417
-	 *
-	 * Limpa o resultado
-	 * @param  string  - O resultado a ser limpo ($result)
-	 * @return boolean */
-	public function freeResult($result) {
-		return mysql_free_result($result);
-	}
-
-	/* This is called when a database connection is created.
-	 * All connection attributes you set here will be autimatically set
-	 * when a connection is created. 
-	 * @return void */
+	/**
+	* This is called when a database connection is created.
+	*
+	* All connection attributes you set here will be autimatically set
+	* when a connection is created. 
+	*
+	* @return void
+	*/
 	private function setConnectionAttributes() {
 		$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}

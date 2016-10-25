@@ -20,7 +20,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 
 	public function __construct()
 	{
-		$this->db = parent::setDatabase('localhost');
+		$this->db = parent::setDatabase('hostinger');
 	}
 
 	public function getById($userId = false)
@@ -40,7 +40,7 @@ class UserRepository extends \SaSeed\Database\DAO {
 	{
 		try {
 			$mapper = new Mapper();
-			$users = $this->db->getAllRows($this->table);
+			$users = $this->db->getRows($this->table);
 			for ($i = 0; $i < count($users); $i++) {
 				$users[$i] = $mapper->populate(
 						new UserModel(),
@@ -96,17 +96,17 @@ class UserRepository extends \SaSeed\Database\DAO {
 				);
 				return false;
 			}
-			$this->db->updateRow(
+			$this->db->update(
 				$this->table,
-				array(
-					'user',
-					'email',
-					'password'
-				),
 				array(
 					$user->getUser(),
 					$user->getEmail(),
 					$user->getPassword()
+				),
+				array(
+					'user',
+					'email',
+					'password'
 				),
 				"id = ".$user->getId()
 			);

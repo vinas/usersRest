@@ -6,7 +6,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/09/02
-* @version 1.15.0902
+* @version 1.16.1025
 * @license SaSeed\license.txt
 */
 
@@ -29,7 +29,7 @@ class DAO
 	{
 		$settings = parse_ini_file(ConfigPath.'database.ini', true);
 		$db	= new Database();
-		$db->DBConnection(
+		$db->connect(
 			$settings[$dbName]['driver'],
 			$settings[$dbName]['host'],
 			$settings[$dbName]['dbname'],
