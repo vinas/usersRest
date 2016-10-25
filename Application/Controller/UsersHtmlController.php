@@ -37,7 +37,7 @@ class UsersController
 			View::set('page', 'newUser');
 			View::render('user_form');
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -48,7 +48,7 @@ class UsersController
 			View::set('users', $this->service->listUsers());
 			View::render('user_list');
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -61,7 +61,7 @@ class UsersController
 			View::set('user', $this->service->save($user));
 			View::render('user_saved');
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -72,7 +72,7 @@ class UsersController
 			View::set('user', $this->service->getUserById($params[0]));
 			View::render('user_form');
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -83,7 +83,7 @@ class UsersController
 			$this->service->delete($params[0]);
 			View::redirect('/Users/listUsers', true);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 }

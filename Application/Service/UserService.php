@@ -44,7 +44,7 @@ class UserService {
 			}
 			return $responseHandler->handleResponse(100);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 			return $responseHandler->handleResponse(101);
 		}
 	}
@@ -54,7 +54,7 @@ class UserService {
 		try {
 			return $this->repository->listAll();
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -70,7 +70,7 @@ class UserService {
 			$error = new ResponseHandlerService();
 			return $error->handleResponse(660);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -79,7 +79,7 @@ class UserService {
 		try {
 			return $this->repository->deleteUserById($userId);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

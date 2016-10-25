@@ -14,18 +14,26 @@ Final class ExceptionHandler
 {
 
 	/**
-	* Throws an exception error
+	* Throws a system error
 	*
 	* @param string
+	* @param string
+	* @param exception
 	*/
-	public static function throwing($path, $method, $err)
+	public static function throwSysException($path, $method, $err)
 	{
 		throw('['.$path.'::'.$method.'] - '.$err->getMessage().PHP_EOL);
 	}
 
-	public static function throwingNew($path, $method, $msg)
+	/**
+	* Throws an application error
+	*
+	* @param string
+	* @param string
+	* @param string
+	*/
+	public static function throwAppException($path, $method, $msg)
 	{
-
 		throw New \Exception ("[".$path."::".$method."] - ".$msg.PHP_EOL);
 	}
 

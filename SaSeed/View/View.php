@@ -42,14 +42,14 @@ Final class View extends FileHandler
 				require self::getTemplate($name);
 				ob_end_flush();
 			} else {
-				ExceptionHandler::throwingNew(
+				ExceptionHandler::throwAppException(
 					__CLASS__,
 					__FUNCTION__,
 					'Template file not found.'
 				);
 			}
 		} else {
-			ExceptionHandler::throwingNew(
+			ExceptionHandler::throwAppException(
 				__CLASS__,
 				__FUNCTION__,
 				'Template file not informed.'
@@ -92,7 +92,7 @@ Final class View extends FileHandler
 			if (self::templateFileExists($name)) {
 				require self::getTemplate($name);
 			} else {
-				ExceptionHandler::throwingNew(
+				ExceptionHandler::throwAppException(
 					__CLASS__,
 					__FUNCTION__,
 					'Template file not found'
@@ -102,7 +102,7 @@ Final class View extends FileHandler
 			ob_end_clean();
 			return $return;
 		} catch (Exception $e) {
-			ExceptionHandler::throwingNew(
+			ExceptionHandler::throwAppException(
 				__CLASS__,
 				__FUNCTION__,
 				'Not possible to render: '.$e->getMessage()
@@ -151,7 +151,7 @@ Final class View extends FileHandler
 			echo json_encode($array);
 			ob_end_flush();
 		} catch (Exception $e) {
-			ExceptionHandler::throwingNew(
+			ExceptionHandler::throwAppException(
 				__CLASS__,
 				__FUNCTION__,
 				'Not possible to render json: '.$e->getMessage()

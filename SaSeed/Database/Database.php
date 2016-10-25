@@ -23,8 +23,8 @@ class Database
 {
 
 	private $connection;
-	private $lastConnection = null;
 	private $isLocked = false;
+	private $query = false;
 
 	/**
 	* Connects to the Database
@@ -43,7 +43,7 @@ class Database
 			$this->setConnectionAttributes();
 			return $this->connection;
 		} catch (PDOException $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 		return false;
 	}
@@ -69,9 +69,9 @@ class Database
 		try{
 			return $this->connection->query($query);
 		} catch (PDOException $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 		
 	}
@@ -88,7 +88,7 @@ class Database
 		try {
 			return $stmt->fetchAll($mode);
 		} catch (PDOException $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 		
 	}
@@ -214,7 +214,7 @@ class Database
 			$query .= ' WHERE '.$condition;
 			$this->runQuery($query);
 		} else {
-			ExceptionHandler::throwingNew(__CLASS__, __FUNCTION__, 'Error: amount of fields and values informed do not match.');
+			ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: amount of fields and values informed do not match.');
 		}
 	}
 

@@ -34,7 +34,7 @@ class Mapper
 			}
 			return $src;
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -48,7 +48,7 @@ class Mapper
 			}
 			return $dest;
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -65,7 +65,7 @@ class Mapper
 			}
 			return $dest;
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS, __FUNCTION__, $e);
 		}
 	}
 }

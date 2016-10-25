@@ -37,7 +37,7 @@ class UsersController
 		try {
 			$users = $this->service->listUsers();
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 		View::renderJson($users);
 	}
@@ -49,7 +49,7 @@ class UsersController
 			$params = $this->params->getParams();
 			$user = $this->service->getUserById($params[0]);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 		View::renderJson($user);
 	}
@@ -63,7 +63,7 @@ class UsersController
 			$user = $mapper->populate(new UserModel(), $this->params->getParams());
 			$res = $this->service->save($user);
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 		View::renderJson($res);
 	}
@@ -75,7 +75,7 @@ class UsersController
 			$this->service->delete($params[0]);
 			$res = (object) ['code'=>200, 'message'=>'User deleted.'];
 		} catch (Exception $e) {
-			ExceptionHandler::throwing(__CLASS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 			$res = (object) ['code'=>102, 'message'=>'User could not be deleted'];
 		}
 		View::renderJson($res);

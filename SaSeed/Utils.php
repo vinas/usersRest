@@ -31,7 +31,7 @@ class Utils
 		if (is_object($obj)) {
 			return get_object_vars($obj);
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid object.'
@@ -53,7 +53,7 @@ class Utils
 			}
 			return $obj;
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid array.'
@@ -76,7 +76,7 @@ class Utils
 			}
 			return $str;
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid lenght.'
@@ -100,7 +100,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $y.'-'.$m.'-'.$d;
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
@@ -125,7 +125,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $y.'-'.$m.'-'.$d;
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
@@ -150,7 +150,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $d.'/'.$m.'/'.$y;
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
@@ -175,7 +175,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $m.'/'.$d.'/'.$y;
 		}
-		ExceptionHandler::throwingNew(
+		ExceptionHandler::throwAppException(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
