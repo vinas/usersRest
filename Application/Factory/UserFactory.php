@@ -29,9 +29,10 @@ class UserFactory extends \SaSeed\Database\DAO {
 	{
 		try {
 			$mapper = new Mapper();
+			$this->queryBuilder->from($this->table);
 			return $mapper->populate(
 					new UserModel(),
-					$this->db->getRow($this->table, '*', "id = {$userId}")
+					$this->db->getRow($this->queryBuilder)
 				);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
@@ -42,13 +43,8 @@ class UserFactory extends \SaSeed\Database\DAO {
 	{
 		try {
 			$mapper = new Mapper();
-			
-			//$users = $this->db->getRows($this->table);
 			$this->queryBuilder->from($this->table);
-			$this->queryBuilder->select(['id', 'user', 'email']);
-
 			$users = $this->db->getRows($this->queryBuilder);
-			
 			for ($i = 0; $i < count($users); $i++) {
 				$users[$i] = $mapper->populate(
 						new UserModel(),

@@ -8,7 +8,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/04/16
-* @version 1.16.1026
+* @version 2.16.1026
 * @license SaSeed\license.txt
 *
 * @todo This needs a complete documentation and refactor.
@@ -67,18 +67,12 @@ class Database
 	/**
 	* Get rows and return them as an associative array
 	*
-	* @param string
-	* @param string
-	* @param string
-	* @param integer
-	* @param integer
+	* @param object
 	* @return array
 	*/
-	//public function getRows($table, $selectWhat = '*', $conditions = '1', $limit = false, $max = false)
 	public function getRows($saSeedQuery)
 	{
 		try {
-
 			$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
 			$limit = $saSeedQuery->getLimit();
 			$max = $saSeedQuery->getMax();
@@ -102,14 +96,12 @@ class Database
 	* If more than one row is returned, this method will return
 	* the first row on the result set.
 	*
-	* @param string
-	* @param string
-	* @param string
+	* @param object
 	* @return array
 	*/
-	public function getRow($table, $selectWhat = '*', $conditions = '1')
+	public function getRow($saSeedQuery)
 	{
-		$query = 'SELECT '.$selectWhat.' FROM '.$table.' WHERE '.$conditions;
+		$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
 		$result = $this->fetchAssoc($this->runQuery($query));
 		return (count($result) > 0) ? $result[0] :  false;
 	}

@@ -30,6 +30,7 @@ class UserService {
 	{
 		$responseHandler = new ResponseHandlerService();
 		$mapper = new Mapper();
+		$res = new UserResponseModel();
 		try {
 			if ($this->isUserValid($user)) {
 				$user->setPassword($this->encrypt($user->getPassword()));
@@ -39,16 +40,16 @@ class UserService {
 					$user = $this->factory->saveNew($user);
 				}
 				$res = $mapper->populate(
-						new UserResponseModel(),
+						$res,
 						$user
 					);
 				$res = $responseHandler->handleResponse($res, 200);
 			} else {
-				$res = $responseHandler->handleResponse(new UserResponseModel(), 100);
+				$res = $responseHandler->handleResponse($res, 100);
 			}
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-			$res = $responseHandler->handleResponse(new UserResponseModel(), 101);
+			$res = $responseHandler->handleResponse($res, 101);
 		} finally {
 			return $res;
 		}
@@ -56,10 +57,10 @@ class UserService {
 
 	public function listUsers()
 	{
+		$res = [];
 		try {
 			$mapper = new Mapper();
 			$users = $this->factory->listAll();
-			$res = [];
 			foreach ($users as $user) {
 				$res[] = $mapper->populate(new UsersListResponseModel(), $user);
 			}
@@ -72,26 +73,27 @@ class UserService {
 
 	public function getUserById($userId = false)
 	{
+		$responseHandler = new ResponseHandlerService();
+		$mapper = new Mapper();
+		$res = new UserResponseModel();
 		try {
-			$responseHandler = new ResponseHandlerService();
 			if ($userId) {
-				$mapper = new Mapper();
 				$user = $this->factory->getById($userId);
 				if ($user->getId() > 0 && is_numeric($user->getId())) {
 					$res = $mapper->populate(
-							new UserResponseModel(),
+							$res,
 							$user
 						);
 					$res = $responseHandler->handleResponse($res, 201);
 				} else {
-					$res = $responseHandler->handleResponse(new UserResponseModel(), 102);
+					$res = $responseHandler->handleResponse($res, 102);
 				}
 			} else {
-				$res = $responseHandler->handleResponse(new UserResponseModel(), 103);
+				$res = $responseHandler->handleResponse($res, 103);
 			}
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-			$res = $responseHandler->handleResponse(new UserResponseModel(), 102);
+			$res = $responseHandler->handleResponse($res, 102);
 		} finally {
 			return $res;
 		}
