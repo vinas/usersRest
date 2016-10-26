@@ -9,7 +9,7 @@
 * @author Leandro Menezes
 * @author Raphael Pawlik
 * @since 2012/11/14
-* @version 1.16.1005
+* @version 1.16.1026
 * @license SaSeed\license.txt
 */
 
@@ -131,10 +131,8 @@ Final class View extends FileHandler
 		if ($name) {
 			if (!$full) {
 				$name = parent::setFilePath($name);
-				header("Location: {$name}");
-			} else {
-				header("Location: {$name}");
 			}
+			header("Location: {$name}");
 		}
 	}
 

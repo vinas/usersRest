@@ -21,8 +21,7 @@ class IndexController
 
 	public static function index()
 	{
-		View::set('page', '');
-		View::render("index");
+		View::redirect('http://angularity.pe.hu/', true);
 	}
 
 }
