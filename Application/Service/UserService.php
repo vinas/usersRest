@@ -14,7 +14,8 @@ use SaSeed\ExceptionHandler;
 use SaSeed\Mapper;
 use Application\Repository\UserRepository;
 use Application\Service\ResponseHandlerService;
-use Application\Model\ResponseModel;
+use Application\Model\UserResponseModel;
+use Application\Model\UsersListResponseModel;
 
 class UserService {
 
@@ -31,46 +32,68 @@ class UserService {
 		$mapper = new Mapper();
 		try {
 			if ($this->isUserValid($user)) {
-				$user->setPassword(md5($user->getPassword()));
+				$user->setPassword($this->encrypt($user->getPassword()));
 				if ($user->getId() > 0) {
 					$this->repository->update($user);
 				} else {
 					$user = $this->repository->saveNew($user);
 				}
-				return $mapper->populate(
-						$responseHandler->handleResponse(200),
+				$res = $mapper->populate(
+						new UserResponseModel(),
 						$user
 					);
+				$res = $responseHandler->handleResponse($res, 200);
+			} else {
+				$res = $responseHandler->handleResponse(new UserResponseModel(), 100);
 			}
-			return $responseHandler->handleResponse(100);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-			return $responseHandler->handleResponse(101);
+			$res = $responseHandler->handleResponse(new UserResponseModel(), 101);
+		} finally {
+			return $res;
 		}
 	}
 
 	public function listUsers()
 	{
 		try {
-			return $this->repository->listAll();
+			$mapper = new Mapper();
+			$users = $this->repository->listAll();
+			$res = [];
+			foreach ($users as $user) {
+				$res[] = $mapper->populate(new UsersListResponseModel(), $user);
+			}
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			return $res;
 		}
 	}
 
 	public function getUserById($userId = false)
 	{
 		try {
+			$responseHandler = new ResponseHandlerService();
 			if ($userId) {
+				$mapper = new Mapper();
 				$user = $this->repository->getById($userId);
 				if ($user->getId() > 0 && is_numeric($user->getId())) {
-					return $user;
+					$res = $mapper->populate(
+							new UserResponseModel(),
+							$user
+						);
+					$res = $responseHandler->handleResponse($res, 201);
+				} else {
+					$res = $responseHandler->handleResponse(new UserResponseModel(), 102);
 				}
+			} else {
+				$res = $responseHandler->handleResponse(new UserResponseModel(), 103);
 			}
-			$error = new ResponseHandlerService();
-			return $error->handleResponse(660);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			$res = $responseHandler->handleResponse(new UserResponseModel(), 102);
+		} finally {
+			return $res;
 		}
 	}
 
@@ -93,6 +116,11 @@ class UserService {
 			return false;
 		}
 		return true;
+	}
+
+	private function encrypt($txt)
+	{
+		return md5($txt);
 	}
 
 }

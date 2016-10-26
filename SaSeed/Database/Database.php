@@ -8,7 +8,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/04/16
-* @version 1.16.1025
+* @version 1.16.1026
 * @license SaSeed\license.txt
 *
 * @todo This needs a complete documentation and refactor.
@@ -18,19 +18,12 @@ namespace SaSeed\Database;
 
 use \PDO;
 use SaSeed\ExceptionHandler;
-use SaSeed\Database\QueryBuilder;
 
 class Database
 {
 
 	private $connection;
 	private $isLocked = false;
-	private $queryBuilder = false;
-
-	public function __construct()
-	{
-		$this->queryBuilder = new QueryBuilder();
-	}
 
 	/**
 	* Connects to the Database
@@ -81,16 +74,26 @@ class Database
 	* @param integer
 	* @return array
 	*/
-	public function getRows($table, $selectWhat = '*', $conditions = '1', $limit = false, $max = false)
+	//public function getRows($table, $selectWhat = '*', $conditions = '1', $limit = false, $max = false)
+	public function getRows($saSeedQuery)
 	{
-		$query = 'SELECT '.$selectWhat.' FROM '.$table.' WHERE '.$conditions;
-		if ($limit) {
-			$query .= ' LIMIT '.$limit;
-			if ($max) {
-				$query .= ', '.$max;
+		try {
+
+			$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
+			$limit = $saSeedQuery->getLimit();
+			$max = $saSeedQuery->getMax();
+			if ($limit) {
+				$query .= ' LIMIT '.$limit;
+				if ($max) {
+					$query .= ', '.$max;
+				}
 			}
+			return $this->fetchAssoc($this->runQuery($query));
+		} catch (PDOException $e) {
+			ExceptionHandler::throwSysException(__CLAS__, __FUNCTION__, $e);
+		} catch (Exception $e) {
+			ExceptionHandler::throwSysException(__CLAS__, __FUNCTION__, $e);
 		}
-		return $this->fetchAssoc($this->runQuery($query));
 	}
 
 	/**

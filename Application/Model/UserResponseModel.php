@@ -1,16 +1,16 @@
 <?php
 /**
-* Request Data Error Model
+* Response User Model
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
-* @since 2016/10/19
-* @version 1.16.1019
+* @since 2016/10/26
+* @version 1.16.1026
 * @license SaSeed\license.txt
 */ 
 
 namespace Application\Model;
 
-class ResponseModel implements \JsonSerializable
+class UserResponseModel implements \JsonSerializable
 {
 
 	private $code;
@@ -18,7 +18,24 @@ class ResponseModel implements \JsonSerializable
 	private $id;
 	private $user;
 	private $email;
-	private $password;
+
+	public function setCode($code)
+	{
+		$this->code = $code;
+	}
+	public function getCode()
+	{
+		return $this->code;
+	}
+
+	public function setMessage($message)
+	{
+		$this->message = $message;
+	}
+	public function getMessage()
+	{
+		return $this->message;
+	}
 
 	public function setId($id = false) {
 		$this->id = $id;
@@ -39,40 +56,6 @@ class ResponseModel implements \JsonSerializable
 	}
 	public function getEmail() {
 		return $this->email;
-	}
-
-	public function setPassword($password = false) {
-		$this->password = $password;
-	}
-	public function getPassword() {
-		return $this->password;
-	}
-
-	public function setActive($active = false) {
-		$this->active = $active;
-	}
-	public function getActive() {
-		return $this->active;
-	}
-
-	public function getCode()
-	{
-		return $this->code;
-	}
-
-	public function setCode($code)
-	{
-		$this->code = $code;
-	}
-
-	public function getMessage()
-	{
-		return $this->message;
-	}
-
-	public function setMessage($message)
-	{
-		$this->message = $message;
 	}
 
 	public function listProperties() {

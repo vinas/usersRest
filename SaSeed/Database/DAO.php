@@ -13,7 +13,8 @@
 namespace SaSeed\Database;
 
 use SaSeed\Database\Database;
-use SaSeed\Database\Pagination;
+use SaSeed\Database\QueryBuilder;
+
 
 class DAO
 {
@@ -38,5 +39,11 @@ class DAO
 		);
 		return $db;
 	}
+
+	public function setQueryBuilder()
+	{
+		return new QueryBuilder();
+	}
+
 
 }

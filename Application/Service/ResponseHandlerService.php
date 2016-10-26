@@ -12,13 +12,11 @@ namespace Application\Service;
 
 use SaSeed\ExceptionHandler;
 use Application\Repository\UserRepository;
-use Application\Model\ResponseModel;
 
 class ResponseHandlerService
 {
-	public function handleResponse($code = false)
+	public function handleResponse($res, $code = false)
 	{
-		$res = new ResponseModel();
 		switch ($code) {
 			case 100:
 				$res->setCode($code);
@@ -28,13 +26,25 @@ class ResponseHandlerService
 				$res->setCode($code);
 				$res->setMessage($this->error('User could not be saved.'));
 				break;
+			case 102:
+				$res->setCode($code);
+				$res->setMessage($this->error('User could not be loaded.'));
+				break;
+			case 103:
+				$res->setCode($code);
+				$res->setMessage($this->error('Empty or invalid user id.'));
+				break;
 			case 200:
 				$res->setCode($code);
 				$res->setMessage($this->info('User saved successfully.'));
 				break;
-			case 660:
+			case 201:
 				$res->setCode($code);
-				$res->setMessage($this->error('Invalid or empty Id.'));
+				$res->setMessage($this->info('User loaded successfully.'));
+				break;
+			case 202:
+				$res->setCode($code);
+				$res->setMessage($this->info('User deleted successfully.'));
 				break;
 			default:
 				$res->setCode(666);

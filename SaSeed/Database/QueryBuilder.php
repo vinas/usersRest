@@ -2,7 +2,7 @@
 /**
 * QueryBuilder Class
 *
-* This class helps the developer to builds a string queries;
+* This class helps the developer to build string queries;
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2016/10/25
@@ -18,20 +18,22 @@ use SaSeed\ExceptionHandler;
 class QueryBuilder
 {
 	private $query;
-	private $table;
-	private $tableAlias;
-	private $cols = '';
+	private $from;
+	private $fromAlias;
+	private $cols = '*';
 	private $joins = '';
-	private $conditions = '';
+	private $conditions = '1';
+	private $limit = false;
+	private $max = false;
 
 	public function getQuery()
 	{
 		return $this->query;
 	}
 
-	public function getTable()
+	public function getFrom()
 	{
-		return $this->table;
+		return $this->from;
 	}
 
 	public function getJoins()
@@ -49,14 +51,24 @@ class QueryBuilder
 		return $this->conditions;
 	}
 
+	public function getLimit()
+	{
+		return $this->limit;
+	}
+
+	public function getMax()
+	{
+		return $this->max;
+	}
+
 	public function setQuery($query)
 	{
 		$this->query = $query;
 	}
 
-	public function setTable($table)
+	public function setFrom($from)
 	{
-		$this->table = $table;
+		$this->from = $from;
 	}
 
 	public function setJoins($joins)
@@ -74,9 +86,19 @@ class QueryBuilder
 		$this->conditions = $conditions;
 	}
 
-	public function clearTable()
+	public function setLimit($limit)
 	{
-		$this->table = null;
+		$this->limit = $limit;
+	}
+
+	public function setMax($max)
+	{
+		$this->max = $max;
+	}
+
+	public function clearFrom()
+	{
+		$this->from = null;
 	}
 
 	public function clearJoins()
@@ -91,29 +113,29 @@ class QueryBuilder
 
 	public function clearWhere()
 	{
-		$this->conditions = '';
+		$this->conditions = '1';
 	}
 
 	public function clearQuery()
 	{
 		$this->query = null;
-		$this->table = null;
-		$this->tableAlias = null;
-		$this->cols = '';
+		$this->from = null;
+		$this->fromAlias = null;
+		$this->cols = '*';
 		$this->joins = '';
-		$this->conditions = '';
+		$this->conditions = '1';
 	}
 
-	public function table($table, $alias = false)
+	public function from($table, $alias = false)
 	{
-		$this->table = $table;
+		$this->from = $table;
 		if ($alias) {
-			$this->table .= ' AS '.$alias;
-			$this->tableAlias = $alias;
+			$this->from .= ' AS '.$alias;
+			$this->fromAlias = $alias;
 			return;
 		}
-		$this->table .= ' AS mainTable';
-		$this->tableAlias = 'mainTable';
+		$this->from .= ' AS mainTable';
+		$this->fromAlias = 'mainTable';
 	}
 
 	public function select($cols)
@@ -122,14 +144,14 @@ class QueryBuilder
 			$this->addColumnsToSelect($cols);
 			return;
 		}
-		echo 'Error: Invalid columns sent.';
+		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: No columns sent.');
 	}
 
 	public function join($joinTable, $joinCol, $comp, $compCol, $compAlias = false)
 	{
 		if (is_array($joinTable)) {
 			$this->joins .= 'INNER JOIN '.$joinTable[0].' AS '.$joinTable[1].' ON '.$joinTable[1].'.'.$joinCol.' '.$comp.' ';
-			$this->joins .= ($compAlias) ? $compAlias : $this->tableAlias;
+			$this->joins .= ($compAlias) ? $compAlias : $this->fromAlias;
 			$this->joins .= '.'.$compCol;
 			return;
 		}
@@ -139,9 +161,9 @@ class QueryBuilder
 	public function where($clause)
 	{
 		if (is_array($clause)) {
-			if ($this->conditions != '')
+			if ($this->conditions != '1')
 				$this->conditions .= ' AND ';
-			$this->conditions .= $this->tableAlias.'.'.$clause[0].' '.$clause[1].' '.$clause[2];
+			$this->conditions .= $this->fromAlias.'.'.$clause[0].' '.$clause[1].' '.$clause[2];
 			return;
 		}
 		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid where clause. It must be sent as an array: [column, coparisson, value].');
@@ -150,24 +172,28 @@ class QueryBuilder
 	public function orWhere($clause)
 	{
 		if (is_array($clause)) {
-			$this->conditions .= ' OR '.$this->tableAlias.'.'.$clause[0].' '.$clause[1].' '.$clause[2];
+			$this->conditions .= ' OR '.$this->fromAlias.'.'.$clause[0].' '.$clause[1].' '.$clause[2];
 			return;
 		}
 		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid where clause. It must be sent as an array: [column, coparisson, value].');
 	}
 	public function buildQuery()
 	{
-		$this->query = 'SELECT '.$this->cols.' FROM '.$this->table.' '.$this->joins.' WHERE ';
+		$this->query = 'SELECT '.$this->cols.' FROM '.$this->from.' '.$this->joins.' WHERE ';
 		if ($this->conditions) {
 			$this->query .= $this->conditions;
 			return;
 		}
-		$this->query .= '1';
-
 	}
 
 	private function addColumnsToSelect($cols)
 	{
+		if ($this->cols == '*')
+			$this->cols = '';
+		if ($cols == '*') {
+			$this->cols = '*';
+			return;
+		}
 		if (is_string($cols)) {
 			if ($this->cols != '')
 				$this->cols .= ', ';

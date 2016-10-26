@@ -4,7 +4,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
-* @version 1.16.0901
+* @version 1.16.2026
 * @license SaSeed\license.txt
 */
 namespace Application\Repository;
@@ -16,11 +16,13 @@ use Application\Model\UserModel;
 class UserRepository extends \SaSeed\Database\DAO {
 
 	private $db;
+	private $queryBuilder;
 	private $table = 'users';
 
 	public function __construct()
 	{
 		$this->db = parent::setDatabase('hostinger');
+		$this->queryBuilder = parent::setQueryBuilder();
 	}
 
 	public function getById($userId = false)
@@ -40,7 +42,13 @@ class UserRepository extends \SaSeed\Database\DAO {
 	{
 		try {
 			$mapper = new Mapper();
-			$users = $this->db->getRows($this->table);
+			
+			//$users = $this->db->getRows($this->table);
+			$this->queryBuilder->from($this->table);
+			$this->queryBuilder->select(['id', 'user', 'email']);
+
+			$users = $this->db->getRows($this->queryBuilder);
+			
 			for ($i = 0; $i < count($users); $i++) {
 				$users[$i] = $mapper->populate(
 						new UserModel(),

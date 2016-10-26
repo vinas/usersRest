@@ -16,6 +16,7 @@ use SaSeed\ExceptionHandler;
 use SaSeed\Mapper;
 
 use Application\Model\UserModel;
+use Application\Model\UserResponseModel;
 use Application\Service\ResponseHandlerService;
 use Application\Service\UserService;
 
@@ -33,51 +34,57 @@ class UsersController
 
 	public function listUsers()
 	{
-		$users = false;
+		$res = [];
 		try {
-			$users = $this->service->listUsers();
+			$res = $this->service->listUsers();
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			View::renderJson($res);
 		}
-		View::renderJson($users);
 	}
 
 	public function getUser()
 	{
-		$user = false;
+		$responseHandler = new ResponseHandlerService();
+		$res = $responseHandler->handleResponse(new UserResponseModel());
 		try {
 			$params = $this->params->getParams();
-			$user = $this->service->getUserById($params[0]);
+			$res = $this->service->getUserById($params[0]);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			View::renderJson($res);
 		}
-		View::renderJson($user);
 	}
 
 	public function save()
 	{
 		$responseHandler = new ResponseHandlerService();
-		$res = $responseHandler->handleResponse();
+		$res = $responseHandler->handleResponse(new UserResponseModel());
 		try {
 			$mapper = new Mapper();
 			$user = $mapper->populate(new UserModel(), $this->params->getParams());
 			$res = $this->service->save($user);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			View::renderJson($res);
 		}
-		View::renderJson($res);
 	}
 
 	public function delete()
 	{
+		$responseHandler = new ResponseHandlerService();
+		$res = $responseHandler->handleResponse(new UserResponseModel());
 		try {
 			$params = $this->params->getParams();
 			$this->service->delete($params[0]);
-			$res = (object) ['code'=>200, 'message'=>'User deleted.'];
+			$res = $responseHandler->handleResponse($res, 202);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-			$res = (object) ['code'=>102, 'message'=>'User could not be deleted'];
+		} finally {
+			View::renderJson($res);
 		}
-		View::renderJson($res);
 	}
 }
