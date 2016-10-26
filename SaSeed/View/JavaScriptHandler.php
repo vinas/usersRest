@@ -4,7 +4,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/21
-* @version 1.15.1021
+* @version 1.16.1026
 * @license SaSeed\license.txt
 */
 
@@ -26,7 +26,7 @@ Final class JavaScriptHandler extends FileHandler
 	*/
 	public static function declareGeneralJS()
 	{
-		self::declareJSFilesFromFolder('General');
+		self::declareJSFilesFromFolder('general');
 	}
 
 	/**
@@ -44,7 +44,7 @@ Final class JavaScriptHandler extends FileHandler
 	*/
 	public static function loadGeneralJSLibs()
 	{
-		parent::renderFilesFromFolder(MainJsPath.'Libs'.DIRECTORY_SEPARATOR, 'js');
+		parent::renderFilesFromFolder(MainJsPath.'libs'.DIRECTORY_SEPARATOR, 'js');
 	}
 
 	/**
@@ -52,7 +52,7 @@ Final class JavaScriptHandler extends FileHandler
 	*/
 	public static function loadGeneralJS()
 	{
-		parent::renderFilesFromFolder(MainJsPath.'General'.DIRECTORY_SEPARATOR, 'js');
+		parent::renderFilesFromFolder(MainJsPath.'general'.DIRECTORY_SEPARATOR, 'js');
 	}
 
 	/**
