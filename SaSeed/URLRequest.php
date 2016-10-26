@@ -9,7 +9,7 @@
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @author Leandro Menezes
 * @since 2012/11/14
-* @version 1.16.1021
+* @version 1.16.1026
 * @license SaSeed\license.txt
 */
 
@@ -26,7 +26,7 @@ class URLRequest
 	public function getController()
 	{
 		$params = self::getAllURLParams();
-		return (empty($params[1])) ? 'IndexController' : $params[1].'Controller';
+		return (empty($params[2])) ? 'IndexController' : $params[2].'Controller';
 	}
 
 	/**
@@ -37,7 +37,7 @@ class URLRequest
 	public function getActionFunction()
 	{
 		$params = self::getAllURLParams();
-		return (!empty($params[2])) ? $params[2] : 'index';
+		return (!empty($params[3])) ? $params[3] : 'index';
 	}
 
 	/**
@@ -84,7 +84,7 @@ class URLRequest
 	{
 		$params = [];
 		$urlParams = self::getAllURLParams();
-		for ($i = 3; $i < count($urlParams); $i++) {
+		for ($i = 4; $i < count($urlParams); $i++) {
 			$params[] = $urlParams[$i];
 		}
 		return $params;

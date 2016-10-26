@@ -15,13 +15,10 @@ use SaSeed\View\View;
 class IndexController
 {
 
-	public function __construct()
-	{
-	}
-
 	public static function index()
 	{
-		View::redirect('http://angularity.pe.hu/', true);
+		View::redirect('http://angularity.pe.hu');
 	}
+
 
 }

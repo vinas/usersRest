@@ -11,16 +11,16 @@
 */
 
 // WEB CONTEXT ROUTES
-define('WebJSViewPath', '/Application/View/js/');
-define('WebCSSViewPath', '/Application/View/css/');
-define('WebImgViewPath', '/Application/View/img/');
+define('WebJSViewPath', 'js/');
+define('WebCSSViewPath', 'css/');
+define('WebImgViewPath', 'img/');
 
 // LOCAL ROUTES
 $path = dirname(__FILE__);
 $basePath = substr($path, 0, strpos($path, 'SaSeed'));
-define('ConfigPath', $basePath.'SaSeed'.DIRECTORY_SEPARATOR.'Config'.DIRECTORY_SEPARATOR);
-define('ViewPath', $basePath.'Application'.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR);
-define('ImgPath', $basePath.'Application'.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR);
-define('TemplatesPath', $basePath.'Application'.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
-define('MainJsPath', ViewPath.'js'.DIRECTORY_SEPARATOR);
-define('MainCssPath', ViewPath.'css'.DIRECTORY_SEPARATOR);
+define('ConfigPath', $basePath.'SaSeed/Config/');
+define('ViewPath', $basePath.'public_html/');
+define('ImgPath', ViewPath.'img/');
+define('TemplatesPath', ViewPath.'/templates/');
+define('MainJsPath', ViewPath.'js/');
+define('MainCssPath', ViewPath.'css/');

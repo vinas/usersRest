@@ -4,7 +4,7 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
-* @version 1.16.1005
+* @version 1.16.1026
 * @license SaSeed\license.txt
 */
 

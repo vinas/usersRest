@@ -34,7 +34,7 @@ Final class View extends FileHandler
 	public static function render($name)
 	{
 		if ($name) {
-			self::$JSHandler = new JavaScriptHandler();	
+			self::$JSHandler = new JavaScriptHandler();
 			self::$CSSHandler = new CSSHandler();
 			if (self::templateFileExists($name)) {
 				ob_start();

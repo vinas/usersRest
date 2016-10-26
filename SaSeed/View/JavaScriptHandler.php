@@ -60,7 +60,7 @@ Final class JavaScriptHandler extends FileHandler
 	*
 	* @param string - folder's name
 	*/
-	private static function declareJSFilesFromFolder($folder)
+	public static function declareJSFilesFromFolder($folder)
 	{
 		$files = scandir(MainJsPath.$folder.DIRECTORY_SEPARATOR);
 		$totFiles = count($files);
