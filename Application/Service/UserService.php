@@ -102,7 +102,7 @@ class UserService {
 	public function delete($userId)
 	{
 		try {
-			return $this->factory->deleteUserById($userId);
+			$this->factory->deleteUserById($userId);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}

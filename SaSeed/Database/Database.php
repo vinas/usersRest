@@ -82,11 +82,10 @@ class Database
 					$query .= ', '.$max;
 				}
 			}
-			return $this->fetchAssoc($this->runQuery($query));
-		} catch (PDOException $e) {
-			ExceptionHandler::throwSysException(__CLAS__, __FUNCTION__, $e);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLAS__, __FUNCTION__, $e);
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			return $this->fetchAssoc($this->runQuery($query));
 		}
 	}
 
@@ -101,9 +100,16 @@ class Database
 	*/
 	public function getRow($saSeedQuery)
 	{
-		$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
-		$result = $this->fetchAssoc($this->runQuery($query));
-		return (count($result) > 0) ? $result[0] :  false;
+		$res = null;
+		try {
+			$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
+			$result = $this->fetchAssoc($this->runQuery($query));
+			$res = (count($result) > 0) ? $result[0] :  false;
+		} catch (Exception $e) {
+			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			return $res;
+		}
 	}
 
 	/**
@@ -141,11 +147,15 @@ class Database
 	* Deletes one or more rows
 	*
 	* @param string
-	* @param string
+	* @param array
 	*/
-	public function deleteRow($table, $condition)
+	public function deleteRow($table, $condition = false)
 	{
-		return $this->runQuery('DELETE FROM '.$table.' WHERE '.$condition);
+		if ($condition && is_array($condition)) {
+			$this->runQuery('DELETE FROM '.$table.' WHERE '.$condition[0].' '.$condition[1].' '.$condition[2]);
+		} else {
+			ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Second argument (condition) must be an array: [column, comparator, value]');
+		}
 	}
 
 	/**
@@ -279,12 +289,15 @@ class Database
 	*/
 	private function runQuery($query)
 	{
+		$res = null;
 		try{
-			return $this->connection->query($query);
+			$res = $this->connection->query($query);
 		} catch (PDOException $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+		} finally {
+			return $res;
 		}
 		
 	}

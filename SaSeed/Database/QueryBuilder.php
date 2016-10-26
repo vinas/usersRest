@@ -22,7 +22,7 @@ class QueryBuilder
 	private $fromAlias;
 	private $cols = '*';
 	private $joins = '';
-	private $conditions = '1';
+	private $conditions = '';
 	private $limit = false;
 	private $max = false;
 
@@ -34,6 +34,11 @@ class QueryBuilder
 	public function getFrom()
 	{
 		return $this->from;
+	}
+
+	public function getFromAlias()
+	{
+		return $this->fromAlias;
 	}
 
 	public function getJoins()
@@ -48,7 +53,10 @@ class QueryBuilder
 
 	public function getWhere()
 	{
-		return $this->conditions;
+		if ($this->conditions != '') {
+			return $this->conditions;
+		}
+		return '1';
 	}
 
 	public function getLimit()
@@ -69,6 +77,11 @@ class QueryBuilder
 	public function setFrom($from)
 	{
 		$this->from = $from;
+	}
+
+	public function setFromAlias($alias)
+	{
+		$this->fromAlias = $alias;
 	}
 
 	public function setJoins($joins)
@@ -113,7 +126,7 @@ class QueryBuilder
 
 	public function clearWhere()
 	{
-		$this->conditions = '1';
+		$this->conditions = '';
 	}
 
 	public function clearQuery()
@@ -123,7 +136,7 @@ class QueryBuilder
 		$this->fromAlias = null;
 		$this->cols = '*';
 		$this->joins = '';
-		$this->conditions = '1';
+		$this->conditions = '';
 	}
 
 	public function from($table, $alias = false)
@@ -161,9 +174,9 @@ class QueryBuilder
 	public function where($clause)
 	{
 		if (is_array($clause)) {
-			if ($this->conditions != '1')
+			if ($this->conditions != '')
 				$this->conditions .= ' AND ';
-			$this->conditions .= $this->fromAlias.'.'.$clause[0].' '.$clause[1].' '.$clause[2];
+			$this->conditions .= $clause[0].'.'.$clause[1].' '.$clause[2].' '.$clause[3];
 			return;
 		}
 		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid where clause. It must be sent as an array: [column, coparisson, value].');
@@ -179,11 +192,7 @@ class QueryBuilder
 	}
 	public function buildQuery()
 	{
-		$this->query = 'SELECT '.$this->cols.' FROM '.$this->from.' '.$this->joins.' WHERE ';
-		if ($this->conditions) {
-			$this->query .= $this->conditions;
-			return;
-		}
+		$this->query = 'SELECT '.$this->cols.' FROM '.$this->from.' '.$this->joins.' WHERE '.$this->getWhere();
 	}
 
 	private function addColumnsToSelect($cols)

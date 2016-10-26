@@ -30,6 +30,12 @@ class UserFactory extends \SaSeed\Database\DAO {
 		try {
 			$mapper = new Mapper();
 			$this->queryBuilder->from($this->table);
+			$this->queryBuilder->where([
+					$this->queryBuilder->getFromAlias(),
+					'id',
+					'=',
+					$userId
+				]);
 			return $mapper->populate(
 					new UserModel(),
 					$this->db->getRow($this->queryBuilder)
@@ -44,6 +50,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 		try {
 			$mapper = new Mapper();
 			$this->queryBuilder->from($this->table);
+			$this->queryBuilder->select(['id', 'user', 'email']);
 			$users = $this->db->getRows($this->queryBuilder);
 			for ($i = 0; $i < count($users); $i++) {
 				$users[$i] = $mapper->populate(
@@ -56,7 +63,6 @@ class UserFactory extends \SaSeed\Database\DAO {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
-
 
 	public function getByEmail($email = false)
 	{
@@ -124,7 +130,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 	public function deleteUser($user)
 	{
 		try {
-			return $this->deleteUserById($user->getId());
+			$this->deleteUserById($user->getId());
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
@@ -133,23 +139,9 @@ class UserFactory extends \SaSeed\Database\DAO {
 	public function deleteUserById($userId)
 	{
 		try {
-			return $this->db->deleteRow($this->table, " id = " . $userId);
+			return $this->db->deleteRow($this->table, ['id', '=', $userId]);
 		} catch (Exception $e) {
 			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
 		}
 	}
-
-	public function findUserByLogin($user, $password)
-	{
-		try {
-			return $this->db->getRow(
-				$this->table,
-				'*',
-				"user = '{$user}' AND password = '{$password}'"
-			);
-		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-		}
-	}
-
 }
