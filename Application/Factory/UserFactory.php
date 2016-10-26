@@ -1,19 +1,19 @@
 <?php
 /**
-* User Repository Class
+* User Factory Class
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
 * @version 1.16.2026
 * @license SaSeed\license.txt
 */
-namespace Application\Repository;
+namespace Application\Factory;
 
 use SaSeed\Mapper;
 use SaSeed\ExceptionHandler;
 use Application\Model\UserModel;
 
-class UserRepository extends \SaSeed\Database\DAO {
+class UserFactory extends \SaSeed\Database\DAO {
 
 	private $db;
 	private $queryBuilder;

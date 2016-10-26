@@ -4,14 +4,13 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2016/10/19
-* @version 1.16.1019
+* @version 1.16.1026
 * @license SaSeed\license.txt
 */
 
 namespace Application\Service;
 
 use SaSeed\ExceptionHandler;
-use Application\Repository\UserRepository;
 
 class ResponseHandlerService
 {
