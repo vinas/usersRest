@@ -151,6 +151,15 @@ class QueryBuilder
 		$this->fromAlias = 'mainTable';
 	}
 
+	public function fromRaw($from = false)
+	{
+		if ($from) {
+			$this->setFrom($from);
+			return;
+		}
+		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Empty raw from clause.');
+	}
+
 	public function select($cols)
 	{
 		if ($cols) {
@@ -158,6 +167,15 @@ class QueryBuilder
 			return;
 		}
 		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: No columns sent.');
+	}
+
+	public function selectRaw($select = false)
+	{
+		if ($select) {
+			$this->setSelect($select);
+			return;
+		}
+		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Empty raw select clause.');
 	}
 
 	public function join($joinTable, $joinCol, $comp, $compCol, $compAlias = false)
@@ -180,6 +198,15 @@ class QueryBuilder
 			return;
 		}
 		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid where clause. It must be sent as an array: [column, coparisson, value].');
+	}
+
+	public function whereRaw($where)
+	{
+		if ($where) {
+			$this->setWhere($where);
+			return;
+		}
+		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Empty raw where clause.');
 	}
 
 	public function orWhere($clause)
