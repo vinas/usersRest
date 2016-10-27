@@ -6,249 +6,324 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2016/10/25
-* @version 1.16.1025
+* @version 1.16.1027
 * @license SaSeed\license.txt
 *
 */
 
 namespace SaSeed\Database;
 
-use SaSeed\ExceptionHandler;
+use SaSeed\Handlers\Exceptions;
+use SaSeed\Database\QueryModel;
 
 class QueryBuilder
 {
 	private $query;
-	private $from;
-	private $fromAlias;
-	private $cols = '*';
-	private $joins = '';
-	private $conditions = '';
-	private $limit = false;
-	private $max = false;
+	private $mainTable;
+	private $mainTableAlias;
+	private $cols;
+	private $join;
+	private $conditions;
+
+
+	public function __construct()
+	{
+		$this->query = new QueryModel();
+	}
 
 	public function getQuery()
 	{
 		return $this->query;
 	}
 
-	public function getFrom()
+	public function getMainTableAlias()
 	{
-		return $this->from;
+		return $this->mainTableAlias;
 	}
 
-	public function getFromAlias()
+	/**
+	* Set manually straight to the query the columns to be selected
+	*
+	* @param string
+	* @return void
+	* @throws new exception
+	*/
+	public function rawSelect($select = false)
 	{
-		return $this->fromAlias;
-	}
-
-	public function getJoins()
-	{
-		return $this->joins;
-	}
-
-	public function getSelect()
-	{
-		return $this->cols;
-	}
-
-	public function getWhere()
-	{
-		if ($this->conditions != '') {
-			return $this->conditions;
-		}
-		return '1';
-	}
-
-	public function getLimit()
-	{
-		return $this->limit;
-	}
-
-	public function getMax()
-	{
-		return $this->max;
-	}
-
-	public function setQuery($query)
-	{
-		$this->query = $query;
-	}
-
-	public function setFrom($from)
-	{
-		$this->from = $from;
-	}
-
-	public function setFromAlias($alias)
-	{
-		$this->fromAlias = $alias;
-	}
-
-	public function setJoins($joins)
-	{
-		$this->joins = $joins;
-	}
-
-	public function setSelect($cols)
-	{
-		$this->cols = $cols;
-	}
-
-	public function setWhere($conditions)
-	{
-		$this->conditions = $conditions;
-	}
-
-	public function setLimit($limit)
-	{
-		$this->limit = $limit;
-	}
-
-	public function setMax($max)
-	{
-		$this->max = $max;
-	}
-
-	public function clearFrom()
-	{
-		$this->from = null;
-	}
-
-	public function clearJoins()
-	{
-		$this->joins = '';
-	}
-
-	public function clearSelect()
-	{
-		$this->cols = '';
-	}
-
-	public function clearWhere()
-	{
-		$this->conditions = '';
-	}
-
-	public function clearQuery()
-	{
-		$this->query = null;
-		$this->from = null;
-		$this->fromAlias = null;
-		$this->cols = '*';
-		$this->joins = '';
-		$this->conditions = '';
-	}
-
-	public function from($table, $alias = false)
-	{
-		$this->from = $table;
-		if ($alias) {
-			$this->from .= ' AS '.$alias;
-			$this->fromAlias = $alias;
+		if (isRawInputValid($select)) {
+			$this->query->setSelect($select);
 			return;
 		}
-		$this->from .= ' AS mainTable';
-		$this->fromAlias = 'mainTable';
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Empty or invalid raw value. This will accept only strings.'
+		);
 	}
 
-	public function fromRaw($from = false)
+	/**
+	* Set source table to the query manually
+	*
+	* @param string
+	* @return void
+	* @throws new exception
+	*/
+	public function rawFrom($from = false)
 	{
-		if ($from) {
-			$this->setFrom($from);
+		if (isRawInputValid($from)){
+			$this->query->setFrom($from);
 			return;
 		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Empty raw from clause.');
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Empty or invalid raw value. This will accept only strings.'
+		);
 	}
 
+	/**
+	* Set condition clauses to the query manually
+	*
+	* @param string
+	* @return void
+	* @throws new exception
+	*/
+	public function rawWhere($where = false)
+	{
+		if (isRawInputValid($where)) {
+			$this->query->setWhere($where);
+			return;
+		}
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Empty or invalid raw value. This will accept only strings.'
+		);
+	}
+
+	/**
+	* Set query limit manually
+	*
+	* @param integer
+	* @return void
+	* @throws new exception
+	*/
+	public function setLimit($limit = false)
+	{
+		if (isNumberInputValid($limit)) {
+			$this->query->setLimit($limit);
+			return;
+		}
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Empty or invalid raw value. This will accept only integers bigger than zero.'
+		);
+	}
+
+	/**
+	* Set query max manually
+	*
+	* @param integer
+	* @return void
+	* @throws new exception
+	*/
+	public function setMax($max = false)
+	{
+		if (isNumberInputValid($max)) {
+			$this->query->setMax($max);
+			return;
+		}
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Empty or invalid raw value. This will accept only integers bigger than zero.'
+		);
+	}
+
+	/**
+	* Define table columns to be selected
+	*
+	* @param string
+	*        [colName1, colName2,...]
+	*        [[colName1, colAlias1], [colName2, colAlias2],...]
+	*        [[colName1, colAlias1, tableAlias], [colName2, colAlias2, tableAlias],...]
+	* @return void
+	* @throws new exception
+	*/
 	public function select($cols)
 	{
 		if ($cols) {
 			$this->addColumnsToSelect($cols);
+			$this->query->setSelect($this->cols);
 			return;
 		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: No columns sent.');
+		Exceptions::throwNew(__CLASS__, __FUNCTION__, 'Error: No columns sent.');
 	}
 
-	public function selectRaw($select = false)
+	/**
+	* Define data source
+	*
+	* @param string
+	* @param string
+	* @return void
+	*/
+	public function from($table, $alias = false)
 	{
-		if ($select) {
-			$this->setSelect($select);
-			return;
-		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Empty raw select clause.');
+		$this->mainTable = $table;
+		$this->mainTableAlias = ($alias) ? $alias : 'mainTable';
+		$this->query->setFrom($this->mainTable.' AS '.$this->mainTableAlias);
 	}
 
+	/**
+	* Define adjoined data sources
+	*
+	* @param [colName, colAlias]
+	* @param string
+	* @param string
+	* @param string
+	* @param string
+	* @return void
+	* @throws new exception
+	*/
 	public function join($joinTable, $joinCol, $comp, $compCol, $compAlias = false)
 	{
-		if (is_array($joinTable)) {
-			$this->joins .= 'INNER JOIN '.$joinTable[0].' AS '.$joinTable[1].' ON '.$joinTable[1].'.'.$joinCol.' '.$comp.' ';
-			$this->joins .= ($compAlias) ? $compAlias : $this->fromAlias;
-			$this->joins .= '.'.$compCol;
+		if (!$this->mainTable) {
+			Exceptions::throwNew(
+				__CLASS__,
+				__FUNCTION__,
+				'Error: You must declare the main query table before you can declare joins.'
+			);
 			return;
 		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid table. First argument (joined table) must be sent as an array: [name, alias].');
+		if (is_array($joinTable)) {
+			$this->join = ' INNER JOIN '.$joinTable[0].' AS '.$joinTable[1].' ON '.$joinTable[1].'.'.$joinCol.' '.$comp;
+			$this->join .= ($compAlias) ? $compAlias : $this->mainTableAlias;
+			$this->join .= '.'.$compCol;
+			$this->query->setFrom($this->query->getFrom().$this->join);
+			return;
+		}
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Invalid table. First argument (joined table) must be sent as an array: [name, alias].'
+		);
 	}
 
+	/**
+	* Define where condition clauses
+	*
+	* Once this method is called, it will add AND logical operator to every other call.
+	* For the OR operator, use the function orWhere();
+	*
+	* @param [colName, comparator, value, opt tableAlias]
+	* @return void
+	* @throws new exception
+	*/
 	public function where($clause)
 	{
-		if (is_array($clause)) {
-			if ($this->conditions != '')
-				$this->conditions .= ' AND ';
-			$this->conditions .= $clause[0].'.'.$clause[1].' '.$clause[2].' '.$clause[3];
+		if (is_array($clause) && $clause[0] && $clause[2] && $clause[2]) {
+			$this->conditions = ($this->conditions) ? $this->conditions.' AND ' : '';
+			if ($clause[3])
+				$this->conditions .= $clause[3].'.';
+			$this->conditions .= $clause[0]." ".$clause[1]." '".$clause[2]."'";
+			$this->query->setWhere($this->conditions);
 			return;
 		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid where clause. It must be sent as an array: [column, coparisson, value].');
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Invalid where clause. It must be sent as an array: [colName, comparator, value, opt tableAlias].'
+		);
 	}
 
-	public function whereRaw($where)
-	{
-		if ($where) {
-			$this->setWhere($where);
-			return;
-		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Empty raw where clause.');
-	}
-
+	/**
+	* Define where condition clauses using OR logical operator
+	*
+	* @param [colName, comparator, value, opt tableAlias]
+	* @return void
+	* @throws new exception
+	*/
 	public function orWhere($clause)
 	{
-		if (is_array($clause)) {
-			$this->conditions .= ' OR '.$this->fromAlias.'.'.$clause[0].' '.$clause[1].' '.$clause[2];
-			return;
+		if ($this->conditions) {
+			if (is_array($clause) && $clause[0] && $clause[2] && $clause[2]) {
+				$this->conditions .= ' OR ';
+				if ($clause[3])
+					$this->conditions .= $clause[3].'.';
+				$this->conditions .= $clause[0]." ".$clause[1]." '".$clause[2]."'";
+				$this->query->setWhere($this->conditions);
+				return;
+			}
+			Exceptions::throwNew(
+				__CLASS__,
+				__FUNCTION__,
+				'Error: Invalid where clause. It must be sent as an array: [colName, comparator, value, opt tableAlias].'
+			);
 		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid where clause. It must be sent as an array: [column, coparisson, value].');
+		Exceptions::throwNew(
+			__CLASS__,
+			__FUNCTION__,
+			'Error: Cannot be the first condition declared. Use method where() instead.'
+		);
 	}
-	public function buildQuery()
+
+	/**
+	* Returns the query as a string
+	*
+	* @return string
+	*/
+	public function getQueryAsString()
 	{
-		$this->query = 'SELECT '.$this->cols.' FROM '.$this->from.' '.$this->joins.' WHERE '.$this->getWhere();
+		$strQuery = 'SELECT '.$this->query->getSelect().' FROM '.$this->query->getFrom().' WHERE '.$this->query->getWhere();
+		$limit = $this->query->getLimit();
+		$max = $this->query->getMax();
+		if ($limit) {
+			$strQuery .= ' LIMIT '.$limit;
+			if ($max) {
+				$strQuery .= ', '.$max;
+			}
+		}
+		return $strQuery;
 	}
 
 	private function addColumnsToSelect($cols)
 	{
-		if ($this->cols == '*')
-			$this->cols = '';
 		if ($cols == '*') {
 			$this->cols = '*';
 			return;
 		}
 		if (is_string($cols)) {
-			if ($this->cols != '')
-				$this->cols .= ', ';
-			$this->cols .= $cols;
+ 			$this->cols = ($this->cols) ? $this->cols.', ' : '';
+			$this->cols .= ($this->mainTableAlias) ? $this->mainTableAlias.'.'.$cols : $cols;
 			return;
 		}
 		if (is_array($cols)) {
 			foreach ($cols as $col) {
-				if ($this->cols != '')
-					$this->cols .= ', ';
+				$this->cols = ($this->cols) ? $this->cols.', ' : '';
 				if (is_array($col)) {
-					$this->cols .= $col[0] . ' AS ' .$col[1];
-					continue;
+					if (count($col) == 2) {
+						$this->cols .= $col[0] . ' AS ' .$col[1];
+						continue;
+					} else if (count($col) == 3) {
+						$this->cols .= $col[2].'.'.$col[0] . ' AS ' .$col[1];
+						continue;
+					}
 				}
 				$this->cols .= $col;
 			}
 			return;
 		}
-		ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Invalid columns sent.');
+		Exceptions::throwNew(__CLASS__, __FUNCTION__, 'Error: Invalid columns sent.');
 	}
 
+	private function isRawInputValid($input)
+	{
+		return (($input) && is_string($input) && $input != '') ? true : false;
+	}
+
+	private function isNumberInputValid($input)
+	{
+		return (($input) && is_int($input) && $input > 0) ? true : false;
+	}
 }

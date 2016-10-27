@@ -14,9 +14,9 @@
 * @license SaSeed\license.txt
 */
 
-namespace SaSeed;
+namespace SaSeed\Handlers;
 
-use SaSeed\ExceptionHandler;
+use SaSeed\Handlers\Exceptions;
 
 Final class Session
 {
@@ -64,7 +64,7 @@ Final class Session
 		if (($param) && ($val)) {
 			$_SESSION[$param] = $val;
 		} else {
-			ExceptionHandler::throwAppException(
+			Exceptions::throwNew(
 				__CLASS__,
 				__FUNCTION__,
 				'Not possible to set a parameter.'
@@ -83,7 +83,7 @@ Final class Session
 		if (($param) && (array_key_exists($name, $_SESSION))) {
 			return $_SESSION[$param];
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid session parameter.'
@@ -101,7 +101,7 @@ Final class Session
 		if (($param) && (array_key_exists($param, $_SESSION))) {
 			unset($_SESSION[$param]);
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid session parameter.'

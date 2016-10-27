@@ -4,13 +4,13 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2016/09/01
-* @version 1.16.1005
+* @version 1.16.1027
 * @license SaSeed\license.txt
 */
 
-namespace SaSeed;
+namespace SaSeed\Handlers;
 
-Final class ExceptionHandler
+Final class Exceptions
 {
 
 	/**
@@ -20,7 +20,7 @@ Final class ExceptionHandler
 	* @param string
 	* @param exception
 	*/
-	public static function throwSysException($path, $method, $err)
+	public static function throwing($path, $method, $err)
 	{
 		throw('['.$path.'::'.$method.'] - '.$err->getMessage().PHP_EOL);
 	}
@@ -32,7 +32,7 @@ Final class ExceptionHandler
 	* @param string
 	* @param string
 	*/
-	public static function throwAppException($path, $method, $msg)
+	public static function throwNew($path, $method, $msg)
 	{
 		throw New \Exception ("[".$path."::".$method."] - ".$msg.PHP_EOL);
 	}

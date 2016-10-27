@@ -8,7 +8,7 @@
 * @license SaSeed\license.txt
 */
 
-namespace SaSeed\View;
+namespace SaSeed\Output;
 
 Final class CSSHandler extends FileHandler
 {

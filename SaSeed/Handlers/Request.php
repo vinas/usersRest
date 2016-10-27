@@ -9,13 +9,13 @@
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @author Leandro Menezes
 * @since 2012/11/14
-* @version 1.16.1026
+* @version 1.16.1027
 * @license SaSeed\license.txt
 */
 
-namespace SaSeed;
+namespace SaSeed\Handlers;
 
-class URLRequest
+class Request
 {
 
 	/**
@@ -26,7 +26,7 @@ class URLRequest
 	public function getController()
 	{
 		$params = self::getAllURLParams();
-		return (empty($params[2])) ? 'IndexController' : $params[2].'Controller';
+		return (empty($params[contrlPos])) ? 'IndexController' : $params[contrlPos].'Controller';
 	}
 
 	/**
@@ -37,7 +37,8 @@ class URLRequest
 	public function getActionFunction()
 	{
 		$params = self::getAllURLParams();
-		return (!empty($params[3])) ? $params[3] : 'index';
+		$pos = contrlPos + 1;
+		return (!empty($params[$pos])) ? $params[$pos] : 'index';
 	}
 
 	/**
@@ -84,7 +85,7 @@ class URLRequest
 	{
 		$params = [];
 		$urlParams = self::getAllURLParams();
-		for ($i = 4; $i < count($urlParams); $i++) {
+		for ($i = contrlPos + 2; $i < count($urlParams); $i++) {
 			$params[] = $urlParams[$i];
 		}
 		return $params;

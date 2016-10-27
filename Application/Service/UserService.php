@@ -10,8 +10,9 @@
 
 namespace Application\Service;
 
-use SaSeed\ExceptionHandler;
-use SaSeed\Mapper;
+use SaSeed\Handlers\Exceptions;
+use SaSeed\Handlers\Mapper;
+
 use Application\Factory\UserFactory;
 use Application\Service\ResponseHandlerService;
 use Application\Model\UserResponseModel;
@@ -48,7 +49,7 @@ class UserService {
 				$res = $responseHandler->handleResponse($res, 100);
 			}
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 			$res = $responseHandler->handleResponse($res, 101);
 		} finally {
 			return $res;
@@ -65,7 +66,7 @@ class UserService {
 				$res[] = $mapper->populate(new UsersListResponseModel(), $user);
 			}
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			return $res;
 		}
@@ -92,7 +93,7 @@ class UserService {
 				$res = $responseHandler->handleResponse($res, 103);
 			}
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 			$res = $responseHandler->handleResponse($res, 102);
 		} finally {
 			return $res;
@@ -104,7 +105,7 @@ class UserService {
 		try {
 			$this->factory->deleteUserById($userId);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 

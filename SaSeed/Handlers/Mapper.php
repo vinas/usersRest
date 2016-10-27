@@ -4,14 +4,13 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/28
-* @version 1.16.1024
+* @version 1.16.1027
 * @license SaSeed\license.txt
 */
 
-namespace SaSeed;
+namespace SaSeed\Handlers;
 
-use SaSeed\Model;
-use SaSeed\ExceptionHandler;
+use SaSeed\Handlers\Exceptions;
 
 class Mapper
 {
@@ -34,7 +33,7 @@ class Mapper
 			}
 			return $src;
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -48,7 +47,7 @@ class Mapper
 			}
 			return $dest;
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -65,7 +64,7 @@ class Mapper
 			}
 			return $dest;
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS, __FUNCTION__, $e);
 		}
 	}
 }

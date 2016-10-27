@@ -10,7 +10,7 @@
 
 namespace Application\Service;
 
-use SaSeed\ExceptionHandler;
+use SaSeed\Handlers\Exceptions;
 
 class ResponseHandlerService
 {

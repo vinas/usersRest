@@ -9,13 +9,13 @@
 * @author Leandro Menezes
 * @author Raphael Pawlik
 * @since 2011/10/13
-* @version 1.16.0901
+* @version 1.16.1027
 * @license SaSeed\license.txt
 */
 
 namespace SaSeed;
 
-use SaSeed/ExceptionHandler;
+use SaSeed\Handlers\Exceptions;
 
 class Utils
 {
@@ -25,13 +25,14 @@ class Utils
 	*
 	* @param object
 	* @return array
+	* @throws new exception
 	*/
 	public static function objectToArray($obj)
 	{
 		if (is_object($obj)) {
 			return get_object_vars($obj);
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid object.'
@@ -43,6 +44,7 @@ class Utils
 	*
 	* @param array
 	* @return object
+	* @throws new exception
 	*/
 	public static function arrayToObject($arr)
 	{
@@ -53,7 +55,7 @@ class Utils
 			}
 			return $obj;
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Not a valid array.'
@@ -65,6 +67,7 @@ class Utils
 	*
 	* @param integer - lenght
 	* @return string
+	* @throws new exception
 	*/
 	public static function randomString($len = 8)
 	{
@@ -76,7 +79,7 @@ class Utils
 			}
 			return $str;
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid lenght.'
@@ -87,6 +90,7 @@ class Utils
 	* Formats date to MySql format
 	*
 	* @param string	- accepts "yyyy/mm/dd"
+	* @throws new exception
 	* @return string - "yyyy-mm-dd" 
 	*/
 	public static function toMySqlDate ($date = false)
@@ -100,7 +104,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $y.'-'.$m.'-'.$d;
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
@@ -112,6 +116,7 @@ class Utils
 	*
 	* @param string	- accepts "mm/dd/yyyy"
 	* @return string - "yyyy-mm-dd" 
+	* @throws new exception
 	*/
 	public static function usDateToMySqlDate($date = false)
 	{
@@ -125,7 +130,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $y.'-'.$m.'-'.$d;
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
@@ -137,6 +142,7 @@ class Utils
 	*
 	* @param string	- accepts "yyyy-mm-dd"
 	* @return string - "dd/mm/yyyy"
+	* @throws new exception
 	*/
 	public static function mySqlDateToDate ($data = false)
 	{
@@ -150,7 +156,7 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $d.'/'.$m.'/'.$y;
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
@@ -162,6 +168,7 @@ class Utils
 	*
 	* @param string	- accepts "yyyy-mm-dd"
 	* @return string - "mm/dd/yyyy"
+	* @throws new exception
 	*/
 	public static function mySqlDateToUsDate ($data = false)
 	{
@@ -175,40 +182,10 @@ class Utils
 		if (checkdate($m, $d, $y)) {
 			return $m.'/'.$d.'/'.$y;
 		}
-		ExceptionHandler::throwAppException(
+		Exceptions::throwNew(
 			__CLASS__,
 			__FUNCTION__,
 			'Invalid date.'
 		);
 	}
-
-	/**
-	* Removes ilegal characters to prevent cross-script
-	*
-	* @param string
-	* @return string
-	*/
-	public static function validateXss($str = false)
-	{
-		if ($str) {
-			return str_replace($GLOBALS['xssStrings'], '', $str);
-		}
-		return $str;
-	}
-
-	/**
-	* Formats quotes on string to be html friendly
-	*
-	* @param string
-	* @return string
-	*/
-	public static function htmlQuotes($str = false)
-	{
-		if ($str) {
-			$str = str_replace('"', '&#34;', $str);
-			$str = str_replace("'", '&#39;', $str);
-		}
-		return $str;
-	}
-
 }

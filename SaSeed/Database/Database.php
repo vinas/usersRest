@@ -17,7 +17,7 @@
 namespace SaSeed\Database;
 
 use \PDO;
-use SaSeed\ExceptionHandler;
+use SaSeed\Handlers\Exceptions;
 
 class Database
 {
@@ -42,7 +42,7 @@ class Database
 			$this->setConnectionAttributes();
 			return $this->connection;
 		} catch (PDOException $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 		return false;
 	}
@@ -72,21 +72,28 @@ class Database
 	*/
 	public function getRows($saSeedQuery)
 	{
-		try {
-			$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
-			$limit = $saSeedQuery->getLimit();
-			$max = $saSeedQuery->getMax();
-			if ($limit) {
-				$query .= ' LIMIT '.$limit;
-				if ($max) {
-					$query .= ', '.$max;
+		$sel = $saSeedQuery->getSelect();
+		$from = $saSeedQuery->getFrom();
+		$where = $saSeedQuery->getWhere();
+		if ($sel && $from && $where) {
+			try {
+				$limit = $saSeedQuery->getLimit();
+				$max = $saSeedQuery->getMax();
+				$query = 'SELECT '.$sel.' FROM '.$from.' WHERE '.$where;
+				if ($limit) {
+					$query .= ' LIMIT '.$limit;
+					if ($max) {
+						$query .= ', '.$max;
+					}
 				}
+				return $this->fetchAssoc($this->runQuery($query));
+			} catch (Exception $e) {
+				Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
+				return [];
 			}
-		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-		} finally {
-			return $this->fetchAssoc($this->runQuery($query));
 		}
+		Exceptions::throwNew(__CLASS__, __FUNCTION__, 'Error: Invalid query.');
+		return [];
 	}
 
 	/**
@@ -100,16 +107,21 @@ class Database
 	*/
 	public function getRow($saSeedQuery)
 	{
-		$res = null;
-		try {
-			$query = 'SELECT '.$saSeedQuery->getSelect().' FROM '.$saSeedQuery->getFrom().' WHERE '.$saSeedQuery->getWhere();
-			$result = $this->fetchAssoc($this->runQuery($query));
-			$res = (count($result) > 0) ? $result[0] :  false;
-		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
-		} finally {
-			return $res;
+		$sel = $saSeedQuery->getSelect();
+		$from = $saSeedQuery->getFrom();
+		$where = $saSeedQuery->getWhere();
+		if ($sel && $from && $where) {
+			try {
+				$query = 'SELECT '.$sel.' FROM '.$from.' WHERE '.$where.' LIMIT 1';
+				$result = $this->fetchAssoc($this->runQuery($query));
+				return (count($result) == 1) ? $result[0] : [];
+			} catch (Exception $e) {
+				Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
+				return [];
+			}
 		}
+		Exceptions::throwNew(__CLASS__, __FUNCTION__, 'Error: Invalid query.');
+		return [];
 	}
 
 	/**
@@ -139,7 +151,7 @@ class Database
 			$query .= ' WHERE '.$condition;
 			$this->runQuery($query);
 		} else {
-			ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: amount of fields and values informed do not match.');
+			Exceptions::throwNew(__CLASS__, __FUNCTION__, 'Error: amount of fields and values informed do not match.');
 		}
 	}
 
@@ -154,7 +166,7 @@ class Database
 		if ($condition && is_array($condition)) {
 			$this->runQuery('DELETE FROM '.$table.' WHERE '.$condition[0].' '.$condition[1].' '.$condition[2]);
 		} else {
-			ExceptionHandler::throwAppException(__CLASS__, __FUNCTION__, 'Error: Second argument (condition) must be an array: [column, comparator, value]');
+			Exceptions::throwNew(__CLASS__, __FUNCTION__, 'Error: Second argument (condition) must be an array: [column, comparator, value]');
 		}
 	}
 
@@ -293,9 +305,9 @@ class Database
 		try{
 			$res = $this->connection->query($query);
 		} catch (PDOException $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			return $res;
 		}
@@ -314,7 +326,7 @@ class Database
 		try {
 			return $stmt->fetchAll($mode);
 		} catch (PDOException $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 		
 	}

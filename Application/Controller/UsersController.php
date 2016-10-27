@@ -10,10 +10,10 @@
 
 namespace Application\Controller;
 
-use SaSeed\View\View;
-use SaSeed\URLRequest;
-use SaSeed\ExceptionHandler;
-use SaSeed\Mapper;
+use SaSeed\Output\View;
+use SaSeed\Handlers\Request;
+use SaSeed\Handlers\Exceptions;
+use SaSeed\Handlers\Mapper;
 
 use Application\Model\UserModel;
 use Application\Model\UserResponseModel;
@@ -28,7 +28,7 @@ class UsersController
 
 	public function __construct()
 	{
-		$this->params = new URLRequest();
+		$this->params = new Request();
 		$this->service = new UserService();
 	}
 
@@ -38,7 +38,7 @@ class UsersController
 		try {
 			$res = $this->service->listUsers();
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			View::renderJson($res);
 		}
@@ -52,7 +52,7 @@ class UsersController
 			$params = $this->params->getParams();
 			$res = $this->service->getUserById($params[0]);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			View::renderJson($res);
 		}
@@ -67,7 +67,7 @@ class UsersController
 			$user = $mapper->populate(new UserModel(), $this->params->getParams());
 			$res = $this->service->save($user);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			View::renderJson($res);
 		}
@@ -82,7 +82,7 @@ class UsersController
 			$this->service->delete($params[0]);
 			$res = $responseHandler->handleResponse($res, 202);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			View::renderJson($res);
 		}

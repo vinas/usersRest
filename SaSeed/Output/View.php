@@ -13,11 +13,11 @@
 * @license SaSeed\license.txt
 */
 
-namespace SaSeed\View;
+namespace SaSeed\Output;
 
-use SaSeed\ExceptionHandler;
-use SaSeed\View\JavaScriptHandler;
-use SaSeed\View\CSSHandler;
+use SaSeed\Handlers\Exceptions;
+use SaSeed\Output\JavaScriptHandler;
+use SaSeed\Output\CSSHandler;
 
 Final class View extends FileHandler
 {
@@ -42,14 +42,14 @@ Final class View extends FileHandler
 				require self::getTemplate($name);
 				ob_end_flush();
 			} else {
-				ExceptionHandler::throwAppException(
+				Exceptions::throwNew(
 					__CLASS__,
 					__FUNCTION__,
 					'Template file not found.'
 				);
 			}
 		} else {
-			ExceptionHandler::throwAppException(
+			Exceptions::throwNew(
 				__CLASS__,
 				__FUNCTION__,
 				'Template file not informed.'
@@ -92,7 +92,7 @@ Final class View extends FileHandler
 			if (self::templateFileExists($name)) {
 				require self::getTemplate($name);
 			} else {
-				ExceptionHandler::throwAppException(
+				Exceptions::throwNew(
 					__CLASS__,
 					__FUNCTION__,
 					'Template file not found'
@@ -102,7 +102,7 @@ Final class View extends FileHandler
 			ob_end_clean();
 			return $return;
 		} catch (Exception $e) {
-			ExceptionHandler::throwAppException(
+			Exceptions::throwNew(
 				__CLASS__,
 				__FUNCTION__,
 				'Not possible to render: '.$e->getMessage()
@@ -149,7 +149,7 @@ Final class View extends FileHandler
 			echo json_encode($array);
 			ob_end_flush();
 		} catch (Exception $e) {
-			ExceptionHandler::throwAppException(
+			Exceptions::throwNew(
 				__CLASS__,
 				__FUNCTION__,
 				'Not possible to render json: '.$e->getMessage()

@@ -10,7 +10,7 @@
 
 namespace Application\Controller;
 
-use SaSeed\View\View;
+use SaSeed\Output\View;
 
 class IndexController
 {

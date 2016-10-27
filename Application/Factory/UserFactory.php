@@ -4,13 +4,14 @@
 *
 * @author Vinas de Andrade <vinas.andrade@gmail.com>
 * @since 2015/10/26
-* @version 1.16.2026
+* @version 1.16.2027
 * @license SaSeed\license.txt
 */
 namespace Application\Factory;
 
-use SaSeed\Mapper;
-use SaSeed\ExceptionHandler;
+use SaSeed\Handlers\Mapper;
+use SaSeed\Handlers\Exceptions;
+
 use Application\Model\UserModel;
 
 class UserFactory extends \SaSeed\Database\DAO {
@@ -32,17 +33,17 @@ class UserFactory extends \SaSeed\Database\DAO {
 			$mapper = new Mapper();
 			$this->queryBuilder->from($this->table);
 			$this->queryBuilder->where([
-					$this->queryBuilder->getFromAlias(),
 					'id',
 					'=',
-					$userId
+					$userId,
+					$this->queryBuilder->getMainTableAlias()
 				]);
 			$user = $mapper->populate(
 					$user,
-					$this->db->getRow($this->queryBuilder)
+					$this->db->getRow($this->queryBuilder->getQuery())
 				);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			return $user;
 		}
@@ -55,7 +56,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 			$mapper = new Mapper();
 			$this->queryBuilder->from($this->table);
 			$this->queryBuilder->select(['id', 'user', 'email']);
-			$users = $this->db->getRows($this->queryBuilder);
+			$users = $this->db->getRows($this->queryBuilder->getQuery());
 			for ($i = 0; $i < count($users); $i++) {
 				$users[$i] = $mapper->populate(
 						new UserModel(),
@@ -63,7 +64,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 					);
 			}
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			return $users;
 		}
@@ -82,7 +83,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 			);
 			$user->setId($this->db->lastId());
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		} finally {
 			return $user;
 		}
@@ -93,7 +94,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 		$res = false;
 		try {
 			if (!$user->getId()) {
-				ExceptionHandler::throwAppException(
+				Exceptions::throwNew(
 					__CLASS__,
 					__FUNCTION__,
 					'No user Id informed.'
@@ -116,7 +117,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 			);
 			$res = true;
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 			$res = false;
 		} finally {
 			return $res;
@@ -128,7 +129,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 		try {
 			$this->deleteUserById($user->getId());
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 
@@ -137,7 +138,7 @@ class UserFactory extends \SaSeed\Database\DAO {
 		try {
 			$this->db->deleteRow($this->table, ['id', '=', $userId]);
 		} catch (Exception $e) {
-			ExceptionHandler::throwSysException(__CLASS__, __FUNCTION__, $e);
+			Exceptions::throwing(__CLASS__, __FUNCTION__, $e);
 		}
 	}
 }

@@ -28,7 +28,7 @@ class DAO
 	*/
 	public function setDatabase($dbName)
 	{
-		$settings = parse_ini_file(ConfigPath.'database.ini', true);
+		$settings = parse_ini_file(SettingsPath.'database.ini', true);
 		$db	= new Database();
 		$db->connect(
 			$settings[$dbName]['driver'],
